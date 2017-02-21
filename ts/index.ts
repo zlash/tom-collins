@@ -34,12 +34,10 @@ class User {
     pos: Position;
 }
 
-console.log(TC.printType(User));
 
 try {
-    let user = TC.parse(User, { name: "asdf", age: 0, id: "", birthday: new Date(), email: "arst@g.com", garbage: "LP*(L#$(*PL", pos: {} });
+    let user = TC.parse(User, { name: "asdf", age: 0, id: "", birthday: new Date(), email: "arst@g.com", garbage: "LP*(L#$(*PL", pos: { x: 0, y: 0 } });
     console.log(user);
-    console.log(TC.sampleSqlInsert(User, "Users", user));
 } catch (e) {
     console.log(e);
 }

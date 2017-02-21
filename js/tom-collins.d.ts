@@ -95,12 +95,4 @@ export declare function Field(constraints?: FieldConstraints): (target: any, pro
 export declare type GenericConstructor<T> = {
     new (...args: any[]): T;
 };
-export declare class ParseOptions {
-    /**
-     * Only performs validation. Instead of a new instance returns a validation result.
-     */
-    validateOnly: boolean;
-}
-export declare function parse<T>(type: GenericConstructor<T>, obj: any, options?: ParseOptions): T;
-export declare function sampleSqlInsert<T>(ctr: GenericConstructor<T>, table: string, obj: T): string;
-export declare function printType<T>(ctr: GenericConstructor<T>): string;
+export declare function parse<T>(type: GenericConstructor<T>, obj: any): T;

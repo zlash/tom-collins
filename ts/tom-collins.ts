@@ -116,15 +116,7 @@ export function Field(constraints?: FieldConstraints) {
     };
 }
 
-
 export type GenericConstructor<T> = { new (...args: any[]): T; };
-
-export class ParseOptions {
-    /**
-     * Only performs validation. Instead of a new instance returns a validation result.
-     */
-    validateOnly: boolean;
-}
 
 function fillImplicitFieldSettings<T>(type: GenericConstructor<T>) {
     if (!Reflect.getMetadata("fields:options_explicited", type.prototype)) {
@@ -189,10 +181,14 @@ function fillImplicitFieldSettings<T>(type: GenericConstructor<T>) {
     }
 }
 
-export function parse<T>(type: GenericConstructor<T>, obj: any, options?: ParseOptions): T {
+export function parse<T>(type: GenericConstructor<T>, obj: any): T {
 
     fillImplicitFieldSettings(type);
     let fields = Reflect.getMetadata("fields", type.prototype);
+
+    if (fields == undefined) {
+        throw new Error(`Type '${type.name}' does not have fields metadata.`);
+    }
 
     let ret = new type();
     for (let field of fields) {
@@ -214,39 +210,51 @@ export function parse<T>(type: GenericConstructor<T>, obj: any, options?: ParseO
 
             let validType = false;
 
-            for (let type of fieldConstraints.validTypes) {
-                if (type === String && ((typeof ret[field]) === "string" || ret[field] instanceof String)) {
+            for (let targetFieldType of fieldConstraints.validTypes) {
+                if (targetFieldType === String && ((typeof ret[field]) === "string" || ret[field] instanceof String)) {
                     validType = true;
                     break;
-                } else if (type === Number && ((typeof ret[field]) === "number" || ret[field] instanceof Number)) {
+                } else if (targetFieldType === Number && ((typeof ret[field]) === "number" || ret[field] instanceof Number)) {
                     validType = true;
                     break;
-                } else if (type === Boolean && ((typeof ret[field]) === "boolean" || ret[field] instanceof Boolean)) {
+                } else if (targetFieldType === Boolean && ((typeof ret[field]) === "boolean" || ret[field] instanceof Boolean)) {
                     validType = true;
                     break;
-                } else if (ret[field] instanceof type) {
+                } else if (Reflect.getMetadata("fields", targetFieldType.prototype) != undefined) {
+
+                    try {
+                        ret[field] = parse(targetFieldType, ret[field]);
+                        validType = true;
+                        break;
+                    } catch (err) {
+                        throw new Error(`Error parsing field '${field}' of type '${type.name}': ${err.message}`);
+                    }
+
+                } else if (ret[field] instanceof targetFieldType) {
                     validType = true;
                     break;
                 }
             }
 
             if (!validType) {
-                throw new Error(`Invalid type for field ${field}`);
+                throw new Error(`Invalid type for field ${field}, expected '${fieldConstraints.validTypes.reduce((acc: string, cur: any) => {
+                    return acc + `${cur.name} |`;
+                }, "").slice(0, -2)}'`);
             }
 
             if ((typeof ret[field]) === "string" || ret[field] instanceof String) {
 
                 if (fieldConstraints.minLength != undefined && (ret[field] as string).length < fieldConstraints.minLength) {
-                    throw new Error(`Field ${field} must be at least ${fieldConstraints.minLength} characters long.`);
+                    throw new Error(`Field '${field}' must be at least ${fieldConstraints.minLength} characters long.`);
                 }
 
                 if (fieldConstraints.maxLength != undefined && (ret[field] as string).length < fieldConstraints.maxLength) {
-                    throw new Error(`Field ${field} must be less than ${fieldConstraints.maxLength} characters long.`);
+                    throw new Error(`Field '${field}' must be less than ${fieldConstraints.maxLength} characters long.`);
                 }
 
                 if (fieldConstraints.pattern != undefined) {
                     if ((fieldConstraints.pattern as RegExp).exec(ret[field]) == undefined) {
-                        throw new Error(`Field ${field} does not match the required pattern`);
+                        throw new Error(`Field '${field}' does not match the required pattern`);
                     }
                 }
 
@@ -254,14 +262,14 @@ export function parse<T>(type: GenericConstructor<T>, obj: any, options?: ParseO
             } else if ((typeof ret[field]) === "number" || ret[field] instanceof Number) {
 
                 if (fieldConstraints.multipleOf != undefined && ret[field] % fieldConstraints.multipleOf === 0) {
-                    throw new Error(`Field ${field} must be a multiple of ${fieldConstraints.multipleOf}`);
+                    throw new Error(`Field '${field}' must be a multiple of ${fieldConstraints.multipleOf}`);
                 }
 
                 if (fieldConstraints.minimum != undefined) {
                     let violation = ret[field] < fieldConstraints.minimum;
                     violation = fieldConstraints.exclusiveMinimum ? (violation && ret[field] === fieldConstraints.minimum) : violation;
                     if (violation) {
-                        throw new Error(`Field ${field} violates minimum value (${fieldConstraints.minimum}) constraint.`);
+                        throw new Error(`Field '${field}' violates minimum value (${fieldConstraints.minimum}) constraint.`);
                     }
                 }
 
@@ -269,7 +277,7 @@ export function parse<T>(type: GenericConstructor<T>, obj: any, options?: ParseO
                     let violation = ret[field] > fieldConstraints.maximum;
                     violation = fieldConstraints.exclusiveMaximum ? (violation && ret[field] === fieldConstraints.maximum) : violation;
                     if (violation) {
-                        throw new Error(`Field ${field} violates minimum value (${fieldConstraints.maximum}) constraint.`);
+                        throw new Error(`Field '${field}' violates minimum value (${fieldConstraints.maximum}) constraint.`);
                     }
                 }
 
@@ -277,33 +285,13 @@ export function parse<T>(type: GenericConstructor<T>, obj: any, options?: ParseO
 
         } else {
             if (fieldConstraints.required === true) {
-                throw new Error(`Missing field ${field}`);
+                throw new Error(`Missing field '${field}'`);
             }
         }
     }
     return ret;
 }
 
-export function sampleSqlInsert<T>(ctr: GenericConstructor<T>, table: string, obj: T) {
-    let fields = Reflect.getMetadata("fields", ctr.prototype);
-    let values = "";
-
-    for (let field of fields) {
-        values += field + " = " + JSON.stringify(obj[field]) + ", ";
-    }
-
-    return `UPDATE ${table} SET ${values.substring(0, values.length - 2)}`;
-}
-
-export function printType<T>(ctr: GenericConstructor<T>) {
-    let fields = Reflect.getMetadata("fields", ctr.prototype);
-    let ret = {};
-    for (let field of fields) {
-        let fieldType = Reflect.getMetadata("design:type", ctr.prototype, field);
-        ret[field] = fieldType.name;
-    }
-    return ctr.name + "\n" + JSON.stringify(ret, undefined, 2);
-}
 
 
 

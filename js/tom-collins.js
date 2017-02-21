@@ -57,9 +57,6 @@ function Field(constraints) {
     };
 }
 exports.Field = Field;
-class ParseOptions {
-}
-exports.ParseOptions = ParseOptions;
 function fillImplicitFieldSettings(type) {
     if (!Reflect.getMetadata("fields:options_explicited", type.prototype)) {
         let fields = Reflect.getMetadata("fields", type.prototype);
@@ -110,9 +107,12 @@ function fillImplicitFieldSettings(type) {
         Reflect.defineMetadata("fields:options_explicited", true, type.prototype);
     }
 }
-function parse(type, obj, options) {
+function parse(type, obj) {
     fillImplicitFieldSettings(type);
     let fields = Reflect.getMetadata("fields", type.prototype);
+    if (fields == undefined) {
+        throw new Error(`Type '${type.name}' does not have fields metadata.`);
+    }
     let ret = new type();
     for (let field of fields) {
         let fieldConstraints = Reflect.getMetadata("field:constraints", type.prototype, field);
@@ -127,86 +127,79 @@ function parse(type, obj, options) {
                 }
             }
             let validType = false;
-            for (let type of fieldConstraints.validTypes) {
-                if (type === String && ((typeof ret[field]) === "string" || ret[field] instanceof String)) {
+            for (let targetFieldType of fieldConstraints.validTypes) {
+                if (targetFieldType === String && ((typeof ret[field]) === "string" || ret[field] instanceof String)) {
                     validType = true;
                     break;
                 }
-                else if (type === Number && ((typeof ret[field]) === "number" || ret[field] instanceof Number)) {
+                else if (targetFieldType === Number && ((typeof ret[field]) === "number" || ret[field] instanceof Number)) {
                     validType = true;
                     break;
                 }
-                else if (type === Boolean && ((typeof ret[field]) === "boolean" || ret[field] instanceof Boolean)) {
+                else if (targetFieldType === Boolean && ((typeof ret[field]) === "boolean" || ret[field] instanceof Boolean)) {
                     validType = true;
                     break;
                 }
-                else if (ret[field] instanceof type) {
+                else if (Reflect.getMetadata("fields", targetFieldType.prototype) != undefined) {
+                    try {
+                        ret[field] = parse(targetFieldType, ret[field]);
+                        validType = true;
+                        break;
+                    }
+                    catch (err) {
+                        throw new Error(`Error parsing field '${field}' of type '${type.name}': ${err.message}`);
+                    }
+                }
+                else if (ret[field] instanceof targetFieldType) {
                     validType = true;
                     break;
                 }
             }
             if (!validType) {
-                throw new Error(`Invalid type for field ${field}`);
+                throw new Error(`Invalid type for field ${field}, expected '${fieldConstraints.validTypes.reduce((acc, cur) => {
+                    return acc + `${cur.name} |`;
+                }, "").slice(0, -2)}'`);
             }
             if ((typeof ret[field]) === "string" || ret[field] instanceof String) {
                 if (fieldConstraints.minLength != undefined && ret[field].length < fieldConstraints.minLength) {
-                    throw new Error(`Field ${field} must be at least ${fieldConstraints.minLength} characters long.`);
+                    throw new Error(`Field '${field}' must be at least ${fieldConstraints.minLength} characters long.`);
                 }
                 if (fieldConstraints.maxLength != undefined && ret[field].length < fieldConstraints.maxLength) {
-                    throw new Error(`Field ${field} must be less than ${fieldConstraints.maxLength} characters long.`);
+                    throw new Error(`Field '${field}' must be less than ${fieldConstraints.maxLength} characters long.`);
                 }
                 if (fieldConstraints.pattern != undefined) {
                     if (fieldConstraints.pattern.exec(ret[field]) == undefined) {
-                        throw new Error(`Field ${field} does not match the required pattern`);
+                        throw new Error(`Field '${field}' does not match the required pattern`);
                     }
                 }
             }
             else if ((typeof ret[field]) === "number" || ret[field] instanceof Number) {
                 if (fieldConstraints.multipleOf != undefined && ret[field] % fieldConstraints.multipleOf === 0) {
-                    throw new Error(`Field ${field} must be a multiple of ${fieldConstraints.multipleOf}`);
+                    throw new Error(`Field '${field}' must be a multiple of ${fieldConstraints.multipleOf}`);
                 }
                 if (fieldConstraints.minimum != undefined) {
                     let violation = ret[field] < fieldConstraints.minimum;
                     violation = fieldConstraints.exclusiveMinimum ? (violation && ret[field] === fieldConstraints.minimum) : violation;
                     if (violation) {
-                        throw new Error(`Field ${field} violates minimum value (${fieldConstraints.minimum}) constraint.`);
+                        throw new Error(`Field '${field}' violates minimum value (${fieldConstraints.minimum}) constraint.`);
                     }
                 }
                 if (fieldConstraints.maximum != undefined) {
                     let violation = ret[field] > fieldConstraints.maximum;
                     violation = fieldConstraints.exclusiveMaximum ? (violation && ret[field] === fieldConstraints.maximum) : violation;
                     if (violation) {
-                        throw new Error(`Field ${field} violates minimum value (${fieldConstraints.maximum}) constraint.`);
+                        throw new Error(`Field '${field}' violates minimum value (${fieldConstraints.maximum}) constraint.`);
                     }
                 }
             }
         }
         else {
             if (fieldConstraints.required === true) {
-                throw new Error(`Missing field ${field}`);
+                throw new Error(`Missing field '${field}'`);
             }
         }
     }
     return ret;
 }
 exports.parse = parse;
-function sampleSqlInsert(ctr, table, obj) {
-    let fields = Reflect.getMetadata("fields", ctr.prototype);
-    let values = "";
-    for (let field of fields) {
-        values += field + " = " + JSON.stringify(obj[field]) + ", ";
-    }
-    return `UPDATE ${table} SET ${values.substring(0, values.length - 2)}`;
-}
-exports.sampleSqlInsert = sampleSqlInsert;
-function printType(ctr) {
-    let fields = Reflect.getMetadata("fields", ctr.prototype);
-    let ret = {};
-    for (let field of fields) {
-        let fieldType = Reflect.getMetadata("design:type", ctr.prototype, field);
-        ret[field] = fieldType.name;
-    }
-    return ctr.name + "\n" + JSON.stringify(ret, undefined, 2);
-}
-exports.printType = printType;
 //# sourceMappingURL=tom-collins.js.map
