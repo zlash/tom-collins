@@ -1,7 +1,6 @@
 import { Field } from "./tom-collins";
 import * as TC from "./tom-collins";
 
-
 class Position {
     @Field()
     x: number;
@@ -9,7 +8,6 @@ class Position {
     @Field()
     y: number;
 }
-
 
 class User {
     @Field()
@@ -36,7 +34,7 @@ class User {
 
 
 try {
-    let user = TC.parse(User, { name: "asdf", age: 0, id: "", birthday: new Date(), email: "arst@g.com", garbage: "LP*(L#$(*PL", pos: { x: 0, y: 0 } });
+    let user = TC.parse(User, { name: "asdf", age: 0, id: "", birthday: "12", email: "arst@g.com", garbage: "LP*(L#$(*PL", pos: { x: 0, y: 0} });
     console.log(user);
 } catch (e) {
     console.log(e);

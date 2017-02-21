@@ -107,6 +107,18 @@ function fillImplicitFieldSettings(type) {
         Reflect.defineMetadata("fields:options_explicited", true, type.prototype);
     }
 }
+function checkPODtype(obj, podType) {
+    if (podType === String && ((typeof obj) === "string" || obj instanceof String)) {
+        return true;
+    }
+    else if (podType === Number && ((typeof obj) === "number" || obj instanceof Number)) {
+        return true;
+    }
+    else if (podType === Boolean && ((typeof obj) === "boolean" || obj instanceof Boolean)) {
+        return true;
+    }
+    return false;
+}
 function parse(type, obj) {
     fillImplicitFieldSettings(type);
     let fields = Reflect.getMetadata("fields", type.prototype);
@@ -120,7 +132,7 @@ function parse(type, obj) {
             ret[field] = obj[field];
             map_loop: for (let map of fieldConstraints.maps) {
                 for (let mapType of map.types) {
-                    if (mapType === typeof (ret[field])) {
+                    if (checkPODtype(ret[field], mapType) || ret[field] instanceof mapType) {
                         ret[field] = map.map(ret[field]);
                         break map_loop;
                     }
@@ -128,15 +140,7 @@ function parse(type, obj) {
             }
             let validType = false;
             for (let targetFieldType of fieldConstraints.validTypes) {
-                if (targetFieldType === String && ((typeof ret[field]) === "string" || ret[field] instanceof String)) {
-                    validType = true;
-                    break;
-                }
-                else if (targetFieldType === Number && ((typeof ret[field]) === "number" || ret[field] instanceof Number)) {
-                    validType = true;
-                    break;
-                }
-                else if (targetFieldType === Boolean && ((typeof ret[field]) === "boolean" || ret[field] instanceof Boolean)) {
+                if (checkPODtype(ret[field], targetFieldType)) {
                     validType = true;
                     break;
                 }
