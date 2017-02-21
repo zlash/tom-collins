@@ -1,4 +1,33 @@
 {
+  "name": "tom-collins",
+  "version": "0.0.1",
+  "description": "TypeScript Object Mapper.",
+  "main": "js/index.js",
+  "typings": "js/index",
+  "files": [
+    "js"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zlash/kwyjibo.git"
+  },
+  "keywords": [
+    "typescript",
+    "ts",
+    "decorators",
+    "helpers",
+    "object mapper",
+    "object"
+  ],
+  "author": "Miguel Ángel Pérez Martínez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zlash/kwyjibo/issues"
+  },
+  "homepage": "https://github.com/zlash/kwyjibo#readme",
   "dependencies": {
     "reflect-metadata": "^0.1.9"
   }
