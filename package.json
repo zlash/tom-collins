@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zlash/kwyjibo.git"
+    "url": "git+https://github.com/zlash/tom-collins.git"
   },
   "keywords": [
     "typescript",
@@ -25,9 +25,9 @@
   "author": "Miguel Ángel Pérez Martínez",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zlash/kwyjibo/issues"
+    "url": "https://github.com/zlash/tom-collins/issues"
   },
-  "homepage": "https://github.com/zlash/kwyjibo#readme",
+  "homepage": "https://github.com/zlash/tom-collins#readme",
   "dependencies": {
     "reflect-metadata": "^0.1.9"
   }
