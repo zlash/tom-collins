@@ -52,6 +52,7 @@ __decorate([
 ], User.prototype, "pos", void 0);
 try {
     let user = TC.parse(User, { name: "asdf", age: 0, id: "", birthday: "12", email: "arst@g.com", garbage: "LP*(L#$(*PL", pos: { x: 0, y: 0 } });
+    console.log(TC.getTextRepresentation(User));
     console.log(user);
 }
 catch (e) {

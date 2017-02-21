@@ -96,3 +96,7 @@ export declare type GenericConstructor<T> = {
     new (...args: any[]): T;
 };
 export declare function parse<T>(type: GenericConstructor<T>, obj: any): T;
+export declare function checkIfTypeHasFieldsMetadata<T>(type: GenericConstructor<T>): boolean;
+export declare function getAcceptedTypesForField<T>(type: GenericConstructor<T>, field: string): any[];
+export declare function reduce<T, U>(type: GenericConstructor<T>, callback: (accumValue: U, fieldName: string, fieldConstraints: any) => U, initialValue: U): U;
+export declare function getTextRepresentation<T>(type: GenericConstructor<T>): string;
