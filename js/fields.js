@@ -85,6 +85,12 @@ function parseFloat(value, constraints) {
 }
 exports.parseFloat = parseFloat;
 function parseValue(targetType, value, constraints, maps) {
+    if (value == undefined) {
+        if (constraints != undefined && constraints.optional !== true) {
+            throw new Error("Required value.");
+        }
+        return value;
+    }
     map_loop: for (let map of maps) {
         for (let mapType of map.types) {
             if (checkPODtype(value, mapType) || value instanceof mapType) {

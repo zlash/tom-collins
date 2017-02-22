@@ -24,6 +24,14 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 require("reflect-metadata");
 const Fields = require("./fields");
 class FieldOptions {
@@ -88,24 +96,16 @@ function parse(type, obj) {
     for (let field of fields) {
         let fieldType = Reflect.getMetadata("design:type", type.prototype, field);
         let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field);
-        if (obj[field] != undefined) {
-            ret[field] = obj[field];
-            try {
-                if (checkIfTypeHasFieldsMetadata(fieldType)) {
-                    ret[field] = parse(fieldType, ret[field]);
-                }
-                else {
-                    ret[field] = Fields.parseValue(fieldType, ret[field], fieldOptions.typeConstraints, fieldOptions.maps);
-                }
+        try {
+            if (checkIfTypeHasFieldsMetadata(fieldType)) {
+                ret[field] = parse(fieldType, obj[field]);
             }
-            catch (err) {
-                throw new Error(`Parse failed for field ${field}: ` + err.message);
+            else {
+                ret[field] = Fields.parseValue(fieldType, obj[field], __assign({}, fieldOptions.typeConstraints, { optional: fieldOptions.required !== true }), fieldOptions.maps);
             }
         }
-        else {
-            if (fieldOptions.required === true) {
-                throw new Error(`Missing required field '${field}'`);
-            }
+        catch (err) {
+            throw new Error(`Parse failed for field ${field}: ` + err.message);
         }
     }
     return ret;

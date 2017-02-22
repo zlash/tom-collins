@@ -130,25 +130,16 @@ export function parse<T>(type: GenericConstructor<T>, obj: any): T {
         let fieldType = Reflect.getMetadata("design:type", type.prototype, field);
         let fieldOptions: FieldOptions = Reflect.getMetadata("field:options", type.prototype, field);
 
-        if (obj[field] != undefined) {
-
-            ret[field] = obj[field];
-
-            try {
-                if (checkIfTypeHasFieldsMetadata(fieldType)) {
-                    ret[field] = parse(fieldType, ret[field]);
-                } else {
-                    ret[field] = Fields.parseValue(fieldType, ret[field], fieldOptions.typeConstraints, fieldOptions.maps as Maps.Map[]);
-                }
-            } catch (err) {
-                throw new Error(`Parse failed for field ${field}: ` + err.message);
+        try {
+            if (checkIfTypeHasFieldsMetadata(fieldType)) {
+                ret[field] = parse(fieldType, obj[field]);
+            } else {
+                ret[field] = Fields.parseValue(fieldType, obj[field], { ...fieldOptions.typeConstraints, optional: fieldOptions.required !== true }, fieldOptions.maps as Maps.Map[]);
             }
-
-        } else {
-            if (fieldOptions.required === true) {
-                throw new Error(`Missing required field '${field}'`);
-            }
+        } catch (err) {
+            throw new Error(`Parse failed for field ${field}: ` + err.message);
         }
+
     }
     return ret;
 }
