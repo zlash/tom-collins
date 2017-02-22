@@ -164,8 +164,9 @@ export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, 
             }
 
             if (constraintsStr.pattern != undefined) {
-                if ((constraintsStr.pattern as RegExp).exec(value as string) == undefined) {
-                    throw new Error(`String pattern constraint violation, it must match match the RegEx: '${(constraintsStr.pattern as RegExp).toString()}'`);
+                let regExp = stringConstraintPatternToRegExp(constraintsStr.pattern);
+                if (regExp.exec(value as string) == undefined) {
+                    throw new Error(`String pattern constraint violation, it must match match the RegEx: '${regExp.toString()}'`);
                 }
             }
 

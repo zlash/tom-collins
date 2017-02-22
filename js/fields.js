@@ -112,8 +112,9 @@ function parseValue(targetType, value, constraints, maps) {
                 throw new Error(`String length constraint violation, it must be ${constraintsStr.maxLength} or less characters long.`);
             }
             if (constraintsStr.pattern != undefined) {
-                if (constraintsStr.pattern.exec(value) == undefined) {
-                    throw new Error(`String pattern constraint violation, it must match match the RegEx: '${constraintsStr.pattern.toString()}'`);
+                let regExp = stringConstraintPatternToRegExp(constraintsStr.pattern);
+                if (regExp.exec(value) == undefined) {
+                    throw new Error(`String pattern constraint violation, it must match match the RegEx: '${regExp.toString()}'`);
                 }
             }
         }
