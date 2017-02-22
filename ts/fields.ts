@@ -172,7 +172,7 @@ export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, 
         } else if (typeof (value) === "number" || value instanceof Number) {
 
             let constraintsN = constraints as NumberConstraints;
-            if (constraintsN.multipleOf != undefined && (value as number) % constraintsN.multipleOf === 0) {
+            if (constraintsN.multipleOf != undefined && (value as number) % constraintsN.multipleOf !== 0) {
                 throw new Error(`Numeric constaint violation, value must be a multiple of ${constraintsN.multipleOf}`);
             }
 

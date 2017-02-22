@@ -119,7 +119,7 @@ function parseValue(targetType, value, constraints, maps) {
         }
         else if (typeof (value) === "number" || value instanceof Number) {
             let constraintsN = constraints;
-            if (constraintsN.multipleOf != undefined && value % constraintsN.multipleOf === 0) {
+            if (constraintsN.multipleOf != undefined && value % constraintsN.multipleOf !== 0) {
                 throw new Error(`Numeric constaint violation, value must be a multiple of ${constraintsN.multipleOf}`);
             }
             if (constraintsN.minimum != undefined) {
