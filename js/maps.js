@@ -23,7 +23,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *********************************************************************************/
-
-export * from "./tom-collins";
-export * from "./fields";
-export * from "./maps";
+"use strict";
+class Map {
+}
+exports.Map = Map;
+/**
+ * Predefined maps.
+ */
+class PredefinedMaps {
+}
+PredefinedMaps.stringToDate = {
+    types: String,
+    map: (v) => {
+        return new Date(v);
+    }
+};
+PredefinedMaps.stringToNumber = {
+    types: String,
+    map: (v) => {
+        let ret = parseFloat(v);
+        if (isNaN(ret)) {
+            throw new Error("Failed to map string to number.");
+        }
+        return ret;
+    }
+};
+PredefinedMaps.stringToInt = {
+    types: String,
+    map: (v) => {
+        let ret = parseInt(v, 10);
+        if (isNaN(ret)) {
+            throw new Error("Failed to map string to int.");
+        }
+        return ret;
+    }
+};
+exports.PredefinedMaps = PredefinedMaps;
+//# sourceMappingURL=maps.js.map

@@ -24,6 +24,43 @@ SOFTWARE.
 
 *********************************************************************************/
 
-export * from "./tom-collins";
-export * from "./fields";
-export * from "./maps";
+export class Map {
+    types: any | any[];
+    map: (v: any) => any;
+}
+
+/**
+ * Predefined maps.
+ */
+export class PredefinedMaps {
+    static stringToDate: Map = {
+        types: String,
+        map: (v: string) => {
+            return new Date(v);
+        }
+    };
+
+    static stringToNumber: Map = {
+        types: String,
+        map: (v: string) => {
+            let ret = parseFloat(v);
+            if (isNaN(ret)) {
+                throw new Error("Failed to map string to number.");
+            }
+            return ret;
+        }
+    };
+
+    static stringToInt: Map = {
+        types: String,
+        map: (v: string) => {
+            let ret = parseInt(v, 10);
+            if (isNaN(ret)) {
+                throw new Error("Failed to map string to int.");
+            }
+            return ret;
+        }
+    };
+
+
+}

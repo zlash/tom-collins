@@ -24,3 +24,5 @@ SOFTWARE.
 
 *********************************************************************************/
 export * from "./tom-collins";
+export * from "./fields";
+export * from "./maps";

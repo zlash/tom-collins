@@ -25,35 +25,16 @@ SOFTWARE.
 *********************************************************************************/
 "use strict";
 require("reflect-metadata");
-var Patterns;
-(function (Patterns) {
-    Patterns[Patterns["Email"] = 0] = "Email";
-    Patterns[Patterns["Uri"] = 1] = "Uri"; // A universal resource identifier (URI), according to RFC3986.
-})(Patterns = exports.Patterns || (exports.Patterns = {}));
-class Map {
+const Fields = require("./fields");
+class FieldOptions {
 }
-exports.Map = Map;
-class FieldConstraints {
-}
-exports.FieldConstraints = FieldConstraints;
-/**
- * Predefined maps.
- */
-class Maps {
-}
-Maps.stringToDate = {
-    types: String,
-    map: (v) => {
-        return new Date(v);
-    }
-};
-exports.Maps = Maps;
-function Field(constraints) {
+exports.FieldOptions = FieldOptions;
+function Field(options) {
     return (target, propertyKey) => {
         let fields = Reflect.getMetadata("fields", target) || [];
         fields.push(propertyKey);
         Reflect.defineMetadata("fields", fields, target);
-        Reflect.defineMetadata("field:constraints", constraints, target, propertyKey);
+        Reflect.defineMetadata("field:options", options, target, propertyKey);
     };
 }
 exports.Field = Field;
@@ -62,39 +43,25 @@ function fillImplicitFieldSettings(type) {
         let fields = Reflect.getMetadata("fields", type.prototype);
         let allRequired = true;
         for (let field of fields) {
-            let fieldConstraints = Reflect.getMetadata("field:constraints", type.prototype, field);
-            if (fieldConstraints != undefined && fieldConstraints.required != undefined) {
-                allRequired = !fieldConstraints.required;
+            let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field);
+            if (fieldOptions != undefined && fieldOptions.required != undefined) {
+                allRequired = !fieldOptions.required;
                 break;
             }
         }
         for (let field of fields) {
-            let fieldConstraints = Reflect.getMetadata("field:constraints", type.prototype, field) || new FieldConstraints();
-            fieldConstraints.required = fieldConstraints.required == undefined ? allRequired : fieldConstraints.required;
-            if (fieldConstraints.pattern != undefined) {
-                if (typeof (fieldConstraints.pattern) === "string") {
-                    fieldConstraints.pattern = new RegExp(fieldConstraints.pattern);
-                }
-                if (typeof (fieldConstraints.pattern) === "number") {
-                    fieldConstraints.pattern = {
-                        [Patterns.Email]: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-                        [Patterns.Uri]: new RegExp("^[^:/?#]+:?//[^/?#]*?[^?#]*\?[^#]*?#.*?")
-                    }[fieldConstraints.pattern];
-                }
+            let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field) || new FieldOptions();
+            fieldOptions.required = fieldOptions.required == undefined ? allRequired : fieldOptions.required;
+            if (fieldOptions.typeConstraints != undefined && fieldOptions.typeConstraints.pattern != undefined) {
+                fieldOptions.typeConstraints.pattern = Fields.stringConstraintPatternToRegExp(fieldOptions.typeConstraints.pattern);
             }
-            if (fieldConstraints.validTypes == undefined) {
-                fieldConstraints.validTypes = Reflect.getMetadata("design:type", type.prototype, field);
+            if (fieldOptions.maps == undefined) {
+                fieldOptions.maps = [];
             }
-            if (!(fieldConstraints.validTypes instanceof Array)) {
-                fieldConstraints.validTypes = [fieldConstraints.validTypes];
+            if (!(fieldOptions.maps instanceof Array)) {
+                fieldOptions.maps = [fieldOptions.maps];
             }
-            if (fieldConstraints.maps == undefined) {
-                fieldConstraints.maps = [];
-            }
-            if (!(fieldConstraints.maps instanceof Array)) {
-                fieldConstraints.maps = [fieldConstraints.maps];
-            }
-            for (let map of fieldConstraints.maps) {
+            for (let map of fieldOptions.maps) {
                 if (map.types == undefined) {
                     map.types = [];
                 }
@@ -102,23 +69,15 @@ function fillImplicitFieldSettings(type) {
                     map.types = [map.types];
                 }
             }
-            Reflect.defineMetadata("field:constraints", fieldConstraints, type.prototype, field);
+            Reflect.defineMetadata("field:options", fieldOptions, type.prototype, field);
         }
         Reflect.defineMetadata("fields:options_explicited", true, type.prototype);
     }
 }
-function checkPODtype(obj, podType) {
-    if (podType === String && ((typeof obj) === "string" || obj instanceof String)) {
-        return true;
-    }
-    else if (podType === Number && ((typeof obj) === "number" || obj instanceof Number)) {
-        return true;
-    }
-    else if (podType === Boolean && ((typeof obj) === "boolean" || obj instanceof Boolean)) {
-        return true;
-    }
-    return false;
+function checkIfTypeHasFieldsMetadata(type) {
+    return Reflect.getMetadata("fields", type.prototype) != undefined;
 }
+exports.checkIfTypeHasFieldsMetadata = checkIfTypeHasFieldsMetadata;
 function parse(type, obj) {
     fillImplicitFieldSettings(type);
     let fields = Reflect.getMetadata("fields", type.prototype);
@@ -127,103 +86,44 @@ function parse(type, obj) {
     }
     let ret = new type();
     for (let field of fields) {
-        let fieldConstraints = Reflect.getMetadata("field:constraints", type.prototype, field);
+        let fieldType = Reflect.getMetadata("design:type", type.prototype, field);
+        let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field);
         if (obj[field] != undefined) {
             ret[field] = obj[field];
-            map_loop: for (let map of fieldConstraints.maps) {
-                for (let mapType of map.types) {
-                    if (checkPODtype(ret[field], mapType) || ret[field] instanceof mapType) {
-                        ret[field] = map.map(ret[field]);
-                        break map_loop;
-                    }
+            try {
+                if (checkIfTypeHasFieldsMetadata(fieldType)) {
+                    ret[field] = parse(fieldType, ret[field]);
+                }
+                else {
+                    ret[field] = Fields.parseValue(fieldType, ret[field], fieldOptions.typeConstraints, fieldOptions.maps);
                 }
             }
-            let validType = false;
-            for (let targetFieldType of fieldConstraints.validTypes) {
-                if (checkPODtype(ret[field], targetFieldType)) {
-                    validType = true;
-                    break;
-                }
-                else if (Reflect.getMetadata("fields", targetFieldType.prototype) != undefined) {
-                    try {
-                        ret[field] = parse(targetFieldType, ret[field]);
-                        validType = true;
-                        break;
-                    }
-                    catch (err) {
-                        throw new Error(`Error parsing field '${field}' of type '${type.name}': ${err.message}`);
-                    }
-                }
-                else if (ret[field] instanceof targetFieldType) {
-                    validType = true;
-                    break;
-                }
-            }
-            if (!validType) {
-                throw new Error(`Invalid type for field ${field}, expected '${fieldConstraints.validTypes.reduce((acc, cur) => {
-                    return acc + ` ${cur.name} |`;
-                }, "").slice(0, -2)}'`);
-            }
-            if ((typeof ret[field]) === "string" || ret[field] instanceof String) {
-                if (fieldConstraints.minLength != undefined && ret[field].length < fieldConstraints.minLength) {
-                    throw new Error(`Field '${field}' must be at least ${fieldConstraints.minLength} characters long.`);
-                }
-                if (fieldConstraints.maxLength != undefined && ret[field].length < fieldConstraints.maxLength) {
-                    throw new Error(`Field '${field}' must be less than ${fieldConstraints.maxLength} characters long.`);
-                }
-                if (fieldConstraints.pattern != undefined) {
-                    if (fieldConstraints.pattern.exec(ret[field]) == undefined) {
-                        throw new Error(`Field '${field}' does not match the required pattern`);
-                    }
-                }
-            }
-            else if ((typeof ret[field]) === "number" || ret[field] instanceof Number) {
-                if (fieldConstraints.multipleOf != undefined && ret[field] % fieldConstraints.multipleOf === 0) {
-                    throw new Error(`Field '${field}' must be a multiple of ${fieldConstraints.multipleOf}`);
-                }
-                if (fieldConstraints.minimum != undefined) {
-                    let violation = ret[field] < fieldConstraints.minimum;
-                    violation = fieldConstraints.exclusiveMinimum ? (violation && ret[field] === fieldConstraints.minimum) : violation;
-                    if (violation) {
-                        throw new Error(`Field '${field}' violates minimum value (${fieldConstraints.minimum}) constraint.`);
-                    }
-                }
-                if (fieldConstraints.maximum != undefined) {
-                    let violation = ret[field] > fieldConstraints.maximum;
-                    violation = fieldConstraints.exclusiveMaximum ? (violation && ret[field] === fieldConstraints.maximum) : violation;
-                    if (violation) {
-                        throw new Error(`Field '${field}' violates minimum value (${fieldConstraints.maximum}) constraint.`);
-                    }
-                }
+            catch (err) {
+                throw new Error(`Parse failed for field ${field}: ` + err.message);
             }
         }
         else {
-            if (fieldConstraints.required === true) {
-                throw new Error(`Missing field '${field}'`);
+            if (fieldOptions.required === true) {
+                throw new Error(`Missing required field '${field}'`);
             }
         }
     }
     return ret;
 }
 exports.parse = parse;
-function checkIfTypeHasFieldsMetadata(type) {
-    return Reflect.getMetadata("fields", type.prototype) != undefined;
-}
-exports.checkIfTypeHasFieldsMetadata = checkIfTypeHasFieldsMetadata;
 function getAcceptedTypesForField(type, field) {
     if (!checkIfTypeHasFieldsMetadata(type)) {
         return undefined;
     }
     fillImplicitFieldSettings(type);
-    let constraints = Reflect.getMetadata("field:constraints", type.prototype, field);
-    if (constraints == undefined) {
-        return undefined;
-    }
-    let acceptedTypes = [...constraints.validTypes];
-    for (let map of constraints.maps) {
-        for (let mapType of map.types) {
-            if (acceptedTypes.indexOf(mapType) === -1) {
-                acceptedTypes.push(mapType);
+    let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field);
+    let acceptedTypes = [Reflect.getMetadata("design:type", type.prototype, field)];
+    if (fieldOptions != undefined) {
+        for (let map of fieldOptions.maps) {
+            for (let mapType of map.types) {
+                if (acceptedTypes.indexOf(mapType) === -1) {
+                    acceptedTypes.push(mapType);
+                }
             }
         }
     }
@@ -237,35 +137,38 @@ function reduce(type, callback, initialValue) {
         throw new Error(`Type '${type.name}' does not have fields metadata.`);
     }
     for (let field of fields) {
-        initialValue = callback(initialValue, field, Reflect.getMetadata("field:constraints", type.prototype, field));
+        initialValue = callback(initialValue, field, Reflect.getMetadata("field:options", type.prototype, field));
     }
     return initialValue;
 }
 exports.reduce = reduce;
+// Reduce example
 function getTextRepresentation(type) {
-    return reduce(type, (accumValue, fieldName, fieldConstraints) => {
-        accumValue += `Field: ${fieldName} ${fieldConstraints.required ? "" : "[ Optional ]"}\n`;
+    return reduce(type, (accumValue, fieldName, fieldOptions) => {
+        accumValue += `Field: ${fieldName} ${fieldOptions.required ? "" : "[ Optional ]"}\n`;
         accumValue += `Valid Types: ${getAcceptedTypesForField(type, fieldName).reduce((acc, cur) => {
             return acc + ` ${cur.name} |`;
         }, "").slice(0, -2)}\n`;
         let extraConstraints = [];
-        if (fieldConstraints.minLength != undefined) {
-            extraConstraints.push(`Minimum acceptable length for string: ${fieldConstraints.minLength}`);
-        }
-        if (fieldConstraints.maxLength != undefined) {
-            extraConstraints.push(`Maximum acceptable length for string: ${fieldConstraints.maxLength}`);
-        }
-        if (fieldConstraints.pattern != undefined) {
-            extraConstraints.push(`The string must match the RegEx: '${fieldConstraints.pattern.toString()}'`);
-        }
-        if (fieldConstraints.multipleOf != undefined) {
-            extraConstraints.push(`Number must be a multiple of: ${fieldConstraints.multipleOf}`);
-        }
-        if (fieldConstraints.minimum != undefined) {
-            extraConstraints.push(`Number must be${fieldConstraints.exclusiveMinimum === true ? " " : " equal or "}greater than ${fieldConstraints.minimum}`);
-        }
-        if (fieldConstraints.maximum != undefined) {
-            extraConstraints.push(`Number must be${fieldConstraints.exclusiveMaximum === true ? " " : " equal or "}less than ${fieldConstraints.minimum}`);
+        if (fieldOptions.typeConstraints != undefined) {
+            if (fieldOptions.typeConstraints.minLength != undefined) {
+                extraConstraints.push(`Minimum acceptable length for string: ${fieldOptions.typeConstraints.minLength}`);
+            }
+            if (fieldOptions.typeConstraints.maxLength) {
+                extraConstraints.push(`Maximum acceptable length for string: ${fieldOptions.typeConstraints.maxLength}`);
+            }
+            if (fieldOptions.typeConstraints.pattern != undefined) {
+                extraConstraints.push(`The string must match the RegEx: '${fieldOptions.typeConstraints.pattern.toString()}'`);
+            }
+            if (fieldOptions.typeConstraints.multipleOf != undefined) {
+                extraConstraints.push(`Number must be a multiple of: ${fieldOptions.typeConstraints.multipleOf}`);
+            }
+            if (fieldOptions.typeConstraints.minimum != undefined) {
+                extraConstraints.push(`Number must be ${fieldOptions.typeConstraints.exclusiveMinimum === true ? " " : " equal or "}greater than ${fieldOptions.typeConstraints.minimum}`);
+            }
+            if (fieldOptions.typeConstraints.maximum) {
+                extraConstraints.push(`Number must be${fieldOptions.typeConstraints.exclusiveMaximum === true ? " " : " equal or "}less than ${fieldOptions.typeConstraints.maximum}`);
+            }
         }
         if (extraConstraints.length > 0) {
             accumValue += `Constraints:\n`;

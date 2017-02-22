@@ -23,7 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *********************************************************************************/
-
-export * from "./tom-collins";
-export * from "./fields";
-export * from "./maps";
+export declare class Map {
+    types: any | any[];
+    map: (v: any) => any;
+}
+/**
+ * Predefined maps.
+ */
+export declare class PredefinedMaps {
+    static stringToDate: Map;
+    static stringToNumber: Map;
+    static stringToInt: Map;
+}
