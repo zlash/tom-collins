@@ -93,11 +93,9 @@ function parseValue(targetType, value, constraints, maps) {
     }
     if (maps != undefined) {
         map_loop: for (let map of maps) {
-            for (let mapType of map.types) {
-                if (checkPODtype(value, mapType) || value instanceof mapType) {
-                    value = map.map(value);
-                    break map_loop;
-                }
+            if (checkPODtype(value, map.type) || value instanceof map.type) {
+                value = map.map(value);
+                break map_loop;
             }
         }
     }

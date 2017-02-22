@@ -33,13 +33,13 @@ exports.Map = Map;
 class PredefinedMaps {
 }
 PredefinedMaps.stringToDate = {
-    types: String,
+    type: String,
     map: (v) => {
         return new Date(v);
     }
 };
 PredefinedMaps.stringToNumber = {
-    types: String,
+    type: String,
     map: (v) => {
         let ret = parseFloat(v);
         if (isNaN(ret)) {
@@ -49,7 +49,7 @@ PredefinedMaps.stringToNumber = {
     }
 };
 PredefinedMaps.stringToInt = {
-    types: String,
+    type: String,
     map: (v) => {
         let ret = parseInt(v, 10);
         if (isNaN(ret)) {

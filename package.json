@@ -1,6 +1,6 @@
 {
   "name": "tom-collins",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "TypeScript Object Mapper.",
   "main": "js/index.js",
   "typings": "js/index",

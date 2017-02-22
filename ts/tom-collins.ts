@@ -94,15 +94,6 @@ function fillImplicitFieldSettings<T>(type: GenericConstructor<T>) {
                 fieldOptions.maps = [fieldOptions.maps];
             }
 
-            for (let map of fieldOptions.maps) {
-                if (map.types == undefined) {
-                    map.types = [];
-                }
-                if (!(map.types instanceof Array)) {
-                    map.types = [map.types];
-                }
-            }
-
             Reflect.defineMetadata("field:options", fieldOptions, type.prototype, field);
         }
 
@@ -159,10 +150,8 @@ export function getAcceptedTypesForField<T>(type: GenericConstructor<T>, field: 
     if (fieldOptions != undefined) {
 
         for (let map of (fieldOptions.maps as Maps.Map[])) {
-            for (let mapType of map.types) {
-                if (acceptedTypes.indexOf(mapType) === -1) {
-                    acceptedTypes.push(mapType);
-                }
+            if (acceptedTypes.indexOf(map.type) === -1) {
+                acceptedTypes.push(map.type);
             }
         }
 

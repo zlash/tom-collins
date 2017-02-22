@@ -25,7 +25,7 @@ SOFTWARE.
 *********************************************************************************/
 
 export class Map {
-    types: any | any[];
+    type: any;
     map: (v: any) => any;
 }
 
@@ -34,14 +34,14 @@ export class Map {
  */
 export class PredefinedMaps {
     static stringToDate: Map = {
-        types: String,
+        type: String,
         map: (v: string) => {
             return new Date(v);
         }
     };
 
     static stringToNumber: Map = {
-        types: String,
+        type: String,
         map: (v: string) => {
             let ret = parseFloat(v);
             if (isNaN(ret)) {
@@ -52,7 +52,7 @@ export class PredefinedMaps {
     };
 
     static stringToInt: Map = {
-        types: String,
+        type: String,
         map: (v: string) => {
             let ret = parseInt(v, 10);
             if (isNaN(ret)) {

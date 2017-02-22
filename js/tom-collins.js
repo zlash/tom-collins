@@ -69,14 +69,6 @@ function fillImplicitFieldSettings(type) {
             if (!(fieldOptions.maps instanceof Array)) {
                 fieldOptions.maps = [fieldOptions.maps];
             }
-            for (let map of fieldOptions.maps) {
-                if (map.types == undefined) {
-                    map.types = [];
-                }
-                if (!(map.types instanceof Array)) {
-                    map.types = [map.types];
-                }
-            }
             Reflect.defineMetadata("field:options", fieldOptions, type.prototype, field);
         }
         Reflect.defineMetadata("fields:options_explicited", true, type.prototype);
@@ -120,10 +112,8 @@ function getAcceptedTypesForField(type, field) {
     let acceptedTypes = [Reflect.getMetadata("design:type", type.prototype, field)];
     if (fieldOptions != undefined) {
         for (let map of fieldOptions.maps) {
-            for (let mapType of map.types) {
-                if (acceptedTypes.indexOf(mapType) === -1) {
-                    acceptedTypes.push(mapType);
-                }
+            if (acceptedTypes.indexOf(map.type) === -1) {
+                acceptedTypes.push(map.type);
             }
         }
     }

@@ -24,7 +24,7 @@ SOFTWARE.
 
 *********************************************************************************/
 export declare class Map {
-    types: any | any[];
+    type: any;
     map: (v: any) => any;
 }
 /**
