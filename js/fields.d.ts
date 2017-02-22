@@ -70,7 +70,7 @@ export declare class NumberConstraints {
     exclusiveMaximum?: boolean;
 }
 export declare function stringConstraintPatternToRegExp(pattern: StringConstraintPattern): RegExp;
-export declare function parseString(value: any, constraints?: StringConstraints): String;
-export declare function parseInt(value: any, constraints?: NumberConstraints): Number;
-export declare function parseFloat(value: any, constraints?: NumberConstraints): Number;
+export declare function parseString(value: any, constraints?: StringConstraints): string;
+export declare function parseInt(value: any, constraints?: NumberConstraints): number;
+export declare function parseFloat(value: any, constraints?: NumberConstraints): number;
 export declare function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints, maps?: Maps.Map[]): T;

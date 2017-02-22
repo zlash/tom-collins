@@ -117,17 +117,17 @@ function checkPODtype(obj: any, podType: any) {
 }
 
 
-export function parseString(value: any, constraints?: StringConstraints) {
+export function parseString(value: any, constraints?: StringConstraints): string {
     value = value.toString();
-    return parseValue(String, value, constraints);
+    return parseValue(String, value, constraints) as string;
 }
 
-export function parseInt(value: any, constraints?: NumberConstraints) {
-    return parseValue(Number, value, constraints, [Maps.PredefinedMaps.stringToInt]);
+export function parseInt(value: any, constraints?: NumberConstraints): number {
+    return parseValue(Number, value, constraints, [Maps.PredefinedMaps.stringToInt]) as number;
 }
 
-export function parseFloat(value: any, constraints?: NumberConstraints) {
-    return parseValue(Number, value, constraints, [Maps.PredefinedMaps.stringToNumber]);
+export function parseFloat(value: any, constraints?: NumberConstraints): number {
+    return parseValue(Number, value, constraints, [Maps.PredefinedMaps.stringToNumber]) as number;
 }
 
 export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints, maps?: Maps.Map[]): T {
