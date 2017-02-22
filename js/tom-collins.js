@@ -138,7 +138,7 @@ function getTextRepresentation(type) {
         accumValue += `Field: ${fieldName} ${fieldOptions.required ? "" : "[ Optional ]"}\n`;
         accumValue += `Valid Types: ${getAcceptedTypesForField(type, fieldName).reduce((acc, cur) => {
             return acc + ` ${cur.name} |`;
-        }, "").slice(0, -2)}\n`;
+        }, "").slice(0, -1)}\n`;
         let extraConstraints = [];
         if (fieldOptions.typeConstraints != undefined) {
             if (fieldOptions.typeConstraints.minLength != undefined) {

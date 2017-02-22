@@ -183,7 +183,7 @@ export function getTextRepresentation<T>(type: GenericConstructor<T>) {
         accumValue += `Field: ${fieldName} ${fieldOptions.required ? "" : "[ Optional ]"}\n`;
         accumValue += `Valid Types: ${getAcceptedTypesForField(type, fieldName).reduce((acc: string, cur: any) => {
             return acc + ` ${cur.name} |`;
-        }, "").slice(0, -2)}\n`;
+        }, "").slice(0, -1)}\n`;
 
         let extraConstraints = [];
 

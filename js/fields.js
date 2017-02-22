@@ -54,7 +54,7 @@ function stringConstraintPatternToRegExp(pattern) {
         for (let str of pattern) {
             regex += str.toString().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "|";
         }
-        return new RegExp(regex.slice(0, -2) + ")$");
+        return new RegExp(regex.slice(0, -1) + ")$");
     }
     return pattern;
 }
