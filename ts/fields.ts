@@ -116,20 +116,20 @@ function checkPODtype(obj: any, podType: any) {
     return false;
 }
 
-export function parseString(value: any, constraints?: StringConstraints & { optional: boolean; }): string {
+export function parseString(value: any, constraints?: StringConstraints & { optional?: boolean; }): string {
     value = value.toString();
     return parseValue(String, value, constraints) as string;
 }
 
-export function parseInt(value: any, constraints?: NumberConstraints & { optional: boolean; }): number {
+export function parseInt(value: any, constraints?: NumberConstraints & { optional?: boolean; }): number {
     return parseValue(Number, value, constraints, [Maps.PredefinedMaps.stringToInt]) as number;
 }
 
-export function parseFloat(value: any, constraints?: NumberConstraints & { optional: boolean; }): number {
+export function parseFloat(value: any, constraints?: NumberConstraints & { optional?: boolean; }): number {
     return parseValue(Number, value, constraints, [Maps.PredefinedMaps.stringToNumber]) as number;
 }
 
-export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints & { optional: boolean; }, maps?: Maps.Map[]): T {
+export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints & { optional?: boolean; }, maps?: Maps.Map[]): T {
 
     if (value == undefined) {
         if (constraints != undefined && constraints.optional !== true) {
