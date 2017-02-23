@@ -24,9 +24,28 @@ SOFTWARE.
 
 *********************************************************************************/
 
-export * from "./tom-collins";
-export * from "./fields";
-export * from "./maps";
-export * from "./commonNumericFields";
-export * from "./commonFields";
+export type PatternMatcher = { regex: RegExp; invertMatch?: boolean; };
+
+export class Pattern {
+    name: string;
+    matchers: PatternMatcher | PatternMatcher[];
+}
+
+export class PredefinedPatterns {
+    static email: Pattern = {
+        name: "Email",
+        matchers: [{
+            regex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        }]
+    };
+
+    static notWhitespace: Pattern = {
+        name: "Not whitespace",
+        matchers: [{
+            regex: /^\s*$/,
+            invertMatch: true
+        }]
+    };
+}
+
 

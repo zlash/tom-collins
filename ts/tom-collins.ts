@@ -82,10 +82,6 @@ function fillImplicitFieldSettings<T>(type: GenericConstructor<T>) {
             let fieldOptions: FieldOptions = Reflect.getMetadata("field:options", type.prototype, field) || new FieldOptions();
             fieldOptions.required = fieldOptions.required == undefined ? allRequired : fieldOptions.required;
 
-            if (fieldOptions.typeConstraints != undefined && (fieldOptions.typeConstraints as Fields.StringConstraints).pattern != undefined) {
-                (fieldOptions.typeConstraints as Fields.StringConstraints).pattern = Fields.stringConstraintPatternToRegExp((fieldOptions.typeConstraints as Fields.StringConstraints).pattern);
-            }
-
             if (fieldOptions.maps == undefined) {
                 fieldOptions.maps = [];
             }

@@ -25,84 +25,29 @@ SOFTWARE.
 *********************************************************************************/
 
 import * as TC from "./tom-collins";
-import * as Maps from "./maps";
+import * as Fields from "./fields";
+import * as Patterns from "./patterns";
 
-export function NegativeIntegerNotZero(required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
-    return NegativeNumberNotZero(Integer, required, min, exclusiveMin, multipleOf, max, exclusiveMax);
+export function StringNotEmpty(required?: boolean, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
+    return String(required, 1, maxLength, pattern);
 }
 
-export function PositiveIntegerNotZero(required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
-    return PositiveNumberNotZero(Integer, required, max, exclusiveMax, multipleOf, min, exclusiveMin);
+export function StringNotWhitespace(required?: boolean, maxLength?: number) {
+    return String(required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace);
 }
 
-export function NegativeInteger(required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
-    return NegativeNumber(Integer, required, min, exclusiveMin, multipleOf, max, exclusiveMax);
+export function Email(required?: boolean) {
+    return String(required, 1, undefined, Patterns.PredefinedPatterns.email);
 }
 
-export function PositiveInteger(required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
-    return PositiveNumber(Integer, required, max, exclusiveMax, multipleOf, min, exclusiveMin);
-}
-
-export function NegativeFloatNotZero(required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
-    return NegativeNumberNotZero(Float, required, min, exclusiveMin, multipleOf, max, exclusiveMax);
-}
-
-export function PositiveFloatNotZero(required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
-    return PositiveNumberNotZero(Float, required, max, exclusiveMax, multipleOf, min, exclusiveMin);
-}
-
-export function NegativeFloat(required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
-    return NegativeNumber(Float, required, min, exclusiveMin, multipleOf, max, exclusiveMax);
-}
-
-export function PositiveFloat(required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
-    return PositiveNumber(Float, required, max, exclusiveMax, multipleOf, min, exclusiveMin);
-}
-
-export function Integer(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
-    if (multipleOf == undefined) {
-        multipleOf = 1.0;
-    }
-    if (Math.floor(multipleOf) !== multipleOf) {
-        throw new Error("MultipleOf for integer values must be an integer.");
-    }
-    return Float(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
-}
-
-
-export function Float(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
+export function String(required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
     return TC.Field({
         required: required,
-        maps: Maps.PredefinedMaps.stringToNumber,
         typeConstraints: {
-            multipleOf: multipleOf,
-            minimum: min,
-            exclusiveMinimum: exclusiveMin,
-            maximum: max,
-            exclusiveMaximum: exclusiveMax
+            minLength: minLength,
+            maxLength: maxLength,
+            pattern: pattern
         }
     });
 }
 
-
-function NegativeNumberNotZero(fielder: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
-    max = max == undefined ? 0 : Math.min(0, max);
-    exclusiveMax = exclusiveMax || max === 0;
-    return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
-}
-
-function PositiveNumberNotZero(fielder: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
-    min = min == undefined ? 0 : Math.max(0, min);
-    exclusiveMin = exclusiveMin || min === 0;
-    return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
-}
-
-function NegativeNumber(fielder: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
-    max = max == undefined ? 0 : Math.min(0, max);
-    return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
-}
-
-function PositiveNumber(fielder: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
-    min = min == undefined ? 0 : Math.max(0, min);
-    return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
-}

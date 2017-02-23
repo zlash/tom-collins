@@ -23,10 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *********************************************************************************/
-
-export * from "./tom-collins";
-export * from "./fields";
-export * from "./maps";
-export * from "./commonNumericFields";
-export * from "./commonFields";
-
+export declare type PatternMatcher = {
+    regex: RegExp;
+    invertMatch?: boolean;
+};
+export declare class Pattern {
+    name: string;
+    matchers: PatternMatcher | PatternMatcher[];
+}
+export declare class PredefinedPatterns {
+    static email: Pattern;
+    static notWhitespace: Pattern;
+}

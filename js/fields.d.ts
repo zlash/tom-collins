@@ -25,11 +25,8 @@ SOFTWARE.
 *********************************************************************************/
 import * as TC from "./tom-collins";
 import * as Maps from "./maps";
-export declare enum PredefinedPattern {
-    Email = 0,
-    Uri = 1,
-}
-export declare type StringConstraintPattern = RegExp | string | string[] | PredefinedPattern;
+import * as Patterns from "./patterns";
+export declare type StringConstraintPattern = Patterns.Pattern | string[];
 export declare type Constraints = StringConstraints | NumberConstraints;
 export declare class StringConstraints {
     /**
@@ -69,7 +66,7 @@ export declare class NumberConstraints {
     maximum?: number;
     exclusiveMaximum?: boolean;
 }
-export declare function stringConstraintPatternToRegExp(pattern: StringConstraintPattern): RegExp;
+export declare function stringConstraintPatternToPattern(pattern: StringConstraintPattern): Patterns.Pattern;
 export declare function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints & {
     optional?: boolean;
 }, maps?: Maps.Map[]): T;

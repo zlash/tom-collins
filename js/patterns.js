@@ -23,10 +23,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *********************************************************************************/
-
-export * from "./tom-collins";
-export * from "./fields";
-export * from "./maps";
-export * from "./commonNumericFields";
-export * from "./commonFields";
-
+"use strict";
+class Pattern {
+}
+exports.Pattern = Pattern;
+class PredefinedPatterns {
+}
+PredefinedPatterns.email = {
+    name: "Email",
+    matchers: [{
+            regex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        }]
+};
+PredefinedPatterns.notWhitespace = {
+    name: "Not whitespace",
+    matchers: [{
+            regex: /^\s*$/,
+            invertMatch: true
+        }]
+};
+exports.PredefinedPatterns = PredefinedPatterns;
+//# sourceMappingURL=patterns.js.map

@@ -25,79 +25,28 @@ SOFTWARE.
 *********************************************************************************/
 "use strict";
 const TC = require("./tom-collins");
-const Maps = require("./maps");
-function NegativeIntegerNotZero(required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
-    return NegativeNumberNotZero(Integer, required, min, exclusiveMin, multipleOf, max, exclusiveMax);
+const Patterns = require("./patterns");
+function StringNotEmpty(required, maxLength, pattern) {
+    return String(required, 1, maxLength, pattern);
 }
-exports.NegativeIntegerNotZero = NegativeIntegerNotZero;
-function PositiveIntegerNotZero(required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
-    return PositiveNumberNotZero(Integer, required, max, exclusiveMax, multipleOf, min, exclusiveMin);
+exports.StringNotEmpty = StringNotEmpty;
+function StringNotWhitespace(required, maxLength) {
+    return String(required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace);
 }
-exports.PositiveIntegerNotZero = PositiveIntegerNotZero;
-function NegativeInteger(required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
-    return NegativeNumber(Integer, required, min, exclusiveMin, multipleOf, max, exclusiveMax);
+exports.StringNotWhitespace = StringNotWhitespace;
+function Email(required) {
+    return String(required, 1, undefined, Patterns.PredefinedPatterns.email);
 }
-exports.NegativeInteger = NegativeInteger;
-function PositiveInteger(required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
-    return PositiveNumber(Integer, required, max, exclusiveMax, multipleOf, min, exclusiveMin);
-}
-exports.PositiveInteger = PositiveInteger;
-function NegativeFloatNotZero(required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
-    return NegativeNumberNotZero(Float, required, min, exclusiveMin, multipleOf, max, exclusiveMax);
-}
-exports.NegativeFloatNotZero = NegativeFloatNotZero;
-function PositiveFloatNotZero(required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
-    return PositiveNumberNotZero(Float, required, max, exclusiveMax, multipleOf, min, exclusiveMin);
-}
-exports.PositiveFloatNotZero = PositiveFloatNotZero;
-function NegativeFloat(required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
-    return NegativeNumber(Float, required, min, exclusiveMin, multipleOf, max, exclusiveMax);
-}
-exports.NegativeFloat = NegativeFloat;
-function PositiveFloat(required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
-    return PositiveNumber(Float, required, max, exclusiveMax, multipleOf, min, exclusiveMin);
-}
-exports.PositiveFloat = PositiveFloat;
-function Integer(required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
-    if (multipleOf == undefined) {
-        multipleOf = 1.0;
-    }
-    if (Math.floor(multipleOf) !== multipleOf) {
-        throw new Error("MultipleOf for integer values must be an integer.");
-    }
-    return Float(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
-}
-exports.Integer = Integer;
-function Float(required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
+exports.Email = Email;
+function String(required, minLength, maxLength, pattern) {
     return TC.Field({
         required: required,
-        maps: Maps.PredefinedMaps.stringToNumber,
         typeConstraints: {
-            multipleOf: multipleOf,
-            minimum: min,
-            exclusiveMinimum: exclusiveMin,
-            maximum: max,
-            exclusiveMaximum: exclusiveMax
+            minLength: minLength,
+            maxLength: maxLength,
+            pattern: pattern
         }
     });
 }
-exports.Float = Float;
-function NegativeNumberNotZero(fielder, required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
-    max = max == undefined ? 0 : Math.min(0, max);
-    exclusiveMax = exclusiveMax || max === 0;
-    return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
-}
-function PositiveNumberNotZero(fielder, required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
-    min = min == undefined ? 0 : Math.max(0, min);
-    exclusiveMin = exclusiveMin || min === 0;
-    return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
-}
-function NegativeNumber(fielder, required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
-    max = max == undefined ? 0 : Math.min(0, max);
-    return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
-}
-function PositiveNumber(fielder, required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
-    min = min == undefined ? 0 : Math.max(0, min);
-    return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
-}
+exports.String = String;
 //# sourceMappingURL=commonFields.js.map

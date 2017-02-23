@@ -26,13 +26,9 @@ SOFTWARE.
 
 import * as TC from "./tom-collins";
 import * as Maps from "./maps";
+import * as Patterns from "./patterns";
 
-export enum PredefinedPattern {
-    Email, // Internet email address, see RFC 5322, section 3.4.1.
-    Uri // A universal resource identifier (URI), according to RFC3986.
-}
-
-export type StringConstraintPattern = RegExp | string | string[] | PredefinedPattern;
+export type StringConstraintPattern = Patterns.Pattern | string[];
 export type Constraints = StringConstraints | NumberConstraints;
 
 export class StringConstraints {
@@ -76,30 +72,27 @@ export class NumberConstraints {
     exclusiveMaximum?: boolean;
 }
 
-export function stringConstraintPatternToRegExp(pattern: StringConstraintPattern) {
+export function stringConstraintPatternToPattern(pattern: StringConstraintPattern): Patterns.Pattern {
     if (pattern == undefined) {
         return undefined;
     }
 
-    if (typeof (pattern) === "string") {
-        return new RegExp(pattern);
-    }
-
-    if (typeof (pattern) === "number") {
-        return {
-            [PredefinedPattern.Email]: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-            [PredefinedPattern.Uri]: /^[A-Za-z][A-Za-z0-9+\-.]*:(?:\/\/(?:(?:[A-Za-z0-9\-._~!$&'()*+,;=:]|%[0-9A-Fa-f]{2})*@)?(?:\[(?:(?:(?:(?:[0-9A-Fa-f]{1,4}:){6}|::(?:[0-9A-Fa-f]{1,4}:){5}|(?:[0-9A-Fa-f]{1,4})?::(?:[0-9A-Fa-f]{1,4}:){4}|(?:(?:[0-9A-Fa-f]{1,4}:){0,1}[0-9A-Fa-f]{1,4})?::([0-9A-Fa-f]{1,4}:){3}|(?:(?:[0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})?::(?:[0-9A-Fa-f]{1,4}:){2}|(?:(?:[0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})?::[0-9A-Fa-f]{1,4}:|(?:(?:[0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})?::)(?:[0-9A-Fa-f]{1,4}:[0-9A-Fa-f]{1,4}|(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|(?:(?:[0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})?::[0-9A-Fa-f]{1,4}|(?:(?:[0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})?::)|[Vv][0-9A-Fa-f]+\.[A-Za-z0-9\-._~!$&'()*+,;=:]+)\]|(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:[A-Za-z0-9\-._~!$&'()*+,;=]|%[0-9A-Fa-f]{2})*)(?::[0-9]*)?(?:\/(?:[A-Za-z0-9\-._~!$&'()*+,;=:@]|%[0-9A-Fa-f]{2})*)*|\/(?:(?:[A-Za-z0-9\-._~!$&'()*+,;=:@]|%[0-9A-Fa-f]{2})+(?:\/(?:[A-Za-z0-9\-._~!$&'()*+,;=:@]|%[0-9A-Fa-f]{2})*)*)?|(?:[A-Za-z0-9\-._~!$&'()*+,;=:@]|%[0-9A-Fa-f]{2})+(?:\/(?:[A-Za-z0-9\-._~!$&'()*+,;=:@]|%[0-9A-Fa-f]{2})*)*|)(?:\?(?:[A-Za-z0-9\-._~!$&'()*+,;=:@\/?]|%[0-9A-Fa-f]{2})*)?(?:\#(?:[A-Za-z0-9\-._~!$&'()*+,;=:@\/?]|%[0-9A-Fa-f]{2})*)?$/ // tslint:disable-line
-        }[pattern];
-    }
-
     if (pattern instanceof Array) {
         let regex = "^(";
+        let name = "";
 
         for (let str of pattern) {
             regex += str.toString().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "|";
+            name += str.toString() + "|";
         }
 
-        return new RegExp(regex.slice(0, -1) + ")$");
+        regex = regex.slice(0, -1) + ")$";
+        name = name.slice(0, -1);
+
+        return {
+            name: name,
+            matchers: { regex: new RegExp(regex) }
+        };
     }
 
     return pattern;
@@ -151,10 +144,25 @@ export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, 
             }
 
             if (constraintsStr.pattern != undefined) {
-                let regExp = stringConstraintPatternToRegExp(constraintsStr.pattern);
-                if (regExp.exec(value as string) == undefined) {
-                    throw new Error(`String pattern constraint violation, it must match match the RegEx: '${regExp.toString()}'`);
+                let pattern = stringConstraintPatternToPattern(constraintsStr.pattern);
+
+                if (!(pattern.matchers instanceof Array)) {
+                    pattern.matchers = [pattern.matchers];
                 }
+
+                for (let matcher of pattern.matchers) {
+                    if (matcher.regex.exec(value as string) == undefined) {
+                        if (!matcher.invertMatch) {
+                            throw new Error(`String pattern constraint violation, it must match match the pattern: '${pattern.name}'`);
+                        }
+                    } else {
+                        if (matcher.invertMatch === true) {
+                            throw new Error(`String pattern constraint violation, it must match match the pattern: '${pattern.name}'`);
+                        }
+                    }
+                }
+
+
             }
 
         } else if (typeof (value) === "number" || value instanceof Number) {

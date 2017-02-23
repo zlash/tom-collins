@@ -1,10 +1,5 @@
-export declare function NegativeIntegerNotZero(required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean): any;
-export declare function PositiveIntegerNotZero(required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean): any;
-export declare function NegativeInteger(required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean): any;
-export declare function PositiveInteger(required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean): any;
-export declare function NegativeFloatNotZero(required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean): any;
-export declare function PositiveFloatNotZero(required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean): any;
-export declare function NegativeFloat(required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean): any;
-export declare function PositiveFloat(required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean): any;
-export declare function Integer(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number): (target: any, propertyKey: string | symbol) => void;
-export declare function Float(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number): (target: any, propertyKey: string | symbol) => void;
+import * as Fields from "./fields";
+export declare function StringNotEmpty(required?: boolean, maxLength?: number, pattern?: Fields.StringConstraintPattern): (target: any, propertyKey: string | symbol) => void;
+export declare function StringNotWhitespace(required?: boolean, maxLength?: number): (target: any, propertyKey: string | symbol) => void;
+export declare function Email(required?: boolean): (target: any, propertyKey: string | symbol) => void;
+export declare function String(required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern): (target: any, propertyKey: string | symbol) => void;

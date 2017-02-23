@@ -71,6 +71,38 @@ function getValidObjectForNumericTests() {
         integerMultipleOf3: 6
     };
 }
+class ForStringTests {
+}
+__decorate([
+    TC.String(true, 5, 10),
+    __metadata("design:type", String)
+], ForStringTests.prototype, "stringMin5Max10", void 0);
+__decorate([
+    TC.String(true, undefined, undefined, ["banana", "apple"]),
+    __metadata("design:type", String)
+], ForStringTests.prototype, "bananaOrApple", void 0);
+__decorate([
+    TC.Email(),
+    __metadata("design:type", String)
+], ForStringTests.prototype, "email", void 0);
+__decorate([
+    TC.StringNotEmpty(),
+    __metadata("design:type", String)
+], ForStringTests.prototype, "stringNotEmpty", void 0);
+__decorate([
+    TC.StringNotWhitespace(),
+    __metadata("design:type", String)
+], ForStringTests.prototype, "stringNotWhitespace", void 0);
+function getValidObjectForStringTests() {
+    return {
+        optionalString: "",
+        bananaOrApple: "banana",
+        stringMin5Max10: "1234567",
+        email: "a@b.com",
+        stringNotEmpty: "string",
+        stringNotWhitespace: "string",
+    };
+}
 describe("Fields:", function () {
     describe("General:", function () {
         it("should parse an object missing an optional property", function () {
@@ -162,21 +194,76 @@ describe("Fields:", function () {
             });
         });
     });
-    /*
-            @TC.Integer()
-        integer: number;
-    
-        @TC.PositiveInteger(true, 5, true)
-        positiveIntegerMaxExclusive5: number;
-    
-        @TC.NegativeInteger(true, -5)
-        negativeIntegerMinMinus5: number;
-    
-        @TC.PositiveIntegerNotZero()
-        positiveIntegerNotZero: number;
-    
-        @TC.NegativeIntegerNotZero()
-        negativeIntegerNotZero: number;
-        */
+    describe("String fields:", function () {
+        it("should handle valid object correctly", function () {
+            let obj = getValidObjectForStringTests();
+            TC.parse(ForStringTests, obj);
+        });
+        it("should handle minLength and maxLength correctly", function () {
+            let obj = getValidObjectForStringTests();
+            obj.stringMin5Max10 = "1234567";
+            obj = TC.parse(ForStringTests, obj);
+            Assert.equal(obj.stringMin5Max10, "1234567");
+            Assert.throws(() => {
+                let objB = getValidObjectForStringTests();
+                objB.stringMin5Max10 = "1234";
+                TC.parse(ForStringTests, objB);
+            });
+            Assert.throws(() => {
+                let objB = getValidObjectForStringTests();
+                objB.stringMin5Max10 = "1234567891011";
+                TC.parse(ForStringTests, objB);
+            });
+        });
+        it("should handle optional strings correctly", function () {
+            let obj = getValidObjectForStringTests();
+            obj.bananaOrApple = "banana";
+            obj = TC.parse(ForStringTests, obj);
+            Assert.equal(obj.bananaOrApple, "banana");
+            obj = getValidObjectForStringTests();
+            obj.bananaOrApple = "apple";
+            obj = TC.parse(ForStringTests, obj);
+            Assert.equal(obj.bananaOrApple, "apple");
+            Assert.throws(() => {
+                let objB = getValidObjectForStringTests();
+                objB.bananaOrApple = "pear";
+                TC.parse(ForStringTests, objB);
+            });
+        });
+        it("should handle email correctly", function () {
+            let obj = getValidObjectForStringTests();
+            obj.email = "my.address@e-mail.co.jp";
+            obj = TC.parse(ForStringTests, obj);
+            Assert.equal(obj.email, "my.address@e-mail.co.jp");
+            Assert.throws(() => {
+                let objB = getValidObjectForStringTests();
+                objB.email = "1234";
+                TC.parse(ForStringTests, objB);
+            });
+        });
+        it("should handle string not empty correctly", function () {
+            let obj = getValidObjectForStringTests();
+            obj.stringNotEmpty = "!";
+            obj = TC.parse(ForStringTests, obj);
+            Assert.equal(obj.stringNotEmpty, "!");
+            Assert.throws(() => {
+                let objB = getValidObjectForStringTests();
+                objB.stringNotEmpty = "";
+                TC.parse(ForStringTests, objB);
+            });
+        });
+        it("should handle string not whitespace correctly", function () {
+            let obj = getValidObjectForStringTests();
+            obj.stringNotWhitespace = "     !";
+            obj = TC.parse(ForStringTests, obj);
+            Assert.equal(obj.stringNotWhitespace, "     !");
+            Assert.throws(() => {
+                let objB = getValidObjectForStringTests();
+                objB.stringNotWhitespace = `
+                    `;
+                TC.parse(ForStringTests, objB);
+            });
+        });
+    });
 });
 //# sourceMappingURL=test.js.map

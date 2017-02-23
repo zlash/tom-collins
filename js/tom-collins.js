@@ -60,9 +60,6 @@ function fillImplicitFieldSettings(type) {
         for (let field of fields) {
             let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field) || new FieldOptions();
             fieldOptions.required = fieldOptions.required == undefined ? allRequired : fieldOptions.required;
-            if (fieldOptions.typeConstraints != undefined && fieldOptions.typeConstraints.pattern != undefined) {
-                fieldOptions.typeConstraints.pattern = Fields.stringConstraintPatternToRegExp(fieldOptions.typeConstraints.pattern);
-            }
             if (fieldOptions.maps == undefined) {
                 fieldOptions.maps = [];
             }

@@ -30,5 +30,6 @@ function __export(m) {
 __export(require("./tom-collins"));
 __export(require("./fields"));
 __export(require("./maps"));
+__export(require("./commonNumericFields"));
 __export(require("./commonFields"));
 //# sourceMappingURL=index.js.map
