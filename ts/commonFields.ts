@@ -86,23 +86,23 @@ export function Float(required?: boolean, min?: number, max?: number, exclusiveM
 
 
 function NegativeNumberNotZero(fielder: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
-    max = Math.min(0, max);
+    max = max == undefined ? 0 : Math.min(0, max);
     exclusiveMax = exclusiveMax || max === 0;
     return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
 }
 
 function PositiveNumberNotZero(fielder: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
-    min = Math.max(0, min);
+    min = min == undefined ? 0 : Math.max(0, min);
     exclusiveMin = exclusiveMin || min === 0;
     return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
 }
 
 function NegativeNumber(fielder: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
-    max = Math.min(0, max);
+    max = max == undefined ? 0 : Math.min(0, max);
     return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
 }
 
 function PositiveNumber(fielder: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
-    min = Math.max(0, min);
+    min = min == undefined ? 0 : Math.max(0, min);
     return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
 }

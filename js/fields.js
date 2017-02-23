@@ -115,17 +115,13 @@ function parseValue(targetType, value, constraints, maps) {
                 }
             }
             if (constraintsN.minimum != undefined) {
-                let violation = value < constraintsN.minimum;
-                violation = constraintsN.exclusiveMinimum ? (violation && value === constraintsN.minimum) : violation;
-                if (violation) {
+                if (value < constraintsN.minimum || (constraintsN.exclusiveMinimum === true && value === constraintsN.minimum)) {
                     throw new Error(`Numeric constaint violation, value must be${constraintsN.exclusiveMinimum === true ? " " : " equal or "}greater than ${constraintsN.minimum}`);
                 }
             }
             if (constraintsN.maximum != undefined) {
-                let violation = value > constraintsN.maximum;
-                violation = constraintsN.exclusiveMaximum ? (violation && value === constraintsN.maximum) : violation;
-                if (violation) {
-                    throw new Error(`Numeric constaint violation, value must be${constraintsN.exclusiveMaximum === true ? " " : " equal or "}less than ${constraintsN.minimum}`);
+                if (value > constraintsN.maximum || (constraintsN.exclusiveMaximum === true && value === constraintsN.maximum)) {
+                    throw new Error(`Numeric constaint violation, value must be${constraintsN.exclusiveMaximum === true ? " " : " equal or "}less than ${constraintsN.maximum}`);
                 }
             }
         }

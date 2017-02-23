@@ -83,21 +83,21 @@ function Float(required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
 }
 exports.Float = Float;
 function NegativeNumberNotZero(fielder, required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
-    max = Math.min(0, max);
+    max = max == undefined ? 0 : Math.min(0, max);
     exclusiveMax = exclusiveMax || max === 0;
     return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
 }
 function PositiveNumberNotZero(fielder, required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
-    min = Math.max(0, min);
+    min = min == undefined ? 0 : Math.max(0, min);
     exclusiveMin = exclusiveMin || min === 0;
     return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
 }
 function NegativeNumber(fielder, required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
-    max = Math.min(0, max);
+    max = max == undefined ? 0 : Math.min(0, max);
     return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
 }
 function PositiveNumber(fielder, required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
-    min = Math.max(0, min);
+    min = min == undefined ? 0 : Math.max(0, min);
     return fielder(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
 }
 //# sourceMappingURL=commonFields.js.map
