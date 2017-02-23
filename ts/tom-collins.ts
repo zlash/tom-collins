@@ -119,7 +119,13 @@ export function parse<T>(type: GenericConstructor<T>, obj: any): T {
 
         try {
             if (checkIfTypeHasFieldsMetadata(fieldType)) {
-                ret[field] = parse(fieldType, obj[field]);
+                if (obj[field] != undefined) {
+                    ret[field] = parse(fieldType, obj[field]);
+                } else {
+                    if (fieldOptions.required === true) {
+                        throw new Error(`Required field ${field} missing.`);
+                    }
+                }
             } else {
                 ret[field] = Fields.parseValue(fieldType, obj[field], { ...fieldOptions.typeConstraints, optional: fieldOptions.required !== true }, fieldOptions.maps as Maps.Map[]);
             }

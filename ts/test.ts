@@ -113,6 +113,23 @@ function getValidObjectForDateTests(): any {
         customDate: new Date(),
     };
 }
+
+class NestedType {
+    @TC.Float()
+    x: number;
+}
+
+class TypeWithNestedField {
+    @TC.Field()
+    nt: NestedType;
+
+    @TC.Field({ required: false })
+    optionalNT: NestedType;
+
+    @TC.Field()
+    name: string;
+}
+
 describe("Fields:", function () {
 
     describe("General:", function () {
@@ -129,6 +146,18 @@ describe("Fields:", function () {
                 TC.parse(ForNumericTests, obj);
             }, /required/i);
         });
+
+        it("should parse correctly nested types with field definitions", function () {
+            let obj = TC.parse(TypeWithNestedField, { nt: { x: "0.5" }, name: "test" });
+            Assert.equal(obj.nt.x, 0.5);
+            Assert.throws(() => {
+                TC.parse(TypeWithNestedField, { nt: { x: "not a number" }, name: "test" });
+            }, /Failed to map string to number/i);
+            Assert.throws(() => {
+                TC.parse(TypeWithNestedField, { name: "test" });
+            }, /Required field nt missing/i);
+        });
+
     });
 
     describe("Float fields:", function () {

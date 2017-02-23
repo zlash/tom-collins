@@ -87,7 +87,14 @@ function parse(type, obj) {
         let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field);
         try {
             if (checkIfTypeHasFieldsMetadata(fieldType)) {
-                ret[field] = parse(fieldType, obj[field]);
+                if (obj[field] != undefined) {
+                    ret[field] = parse(fieldType, obj[field]);
+                }
+                else {
+                    if (fieldOptions.required === true) {
+                        throw new Error(`Required field ${field} missing.`);
+                    }
+                }
             }
             else {
                 ret[field] = Fields.parseValue(fieldType, obj[field], __assign({}, fieldOptions.typeConstraints, { optional: fieldOptions.required !== true }), fieldOptions.maps);
