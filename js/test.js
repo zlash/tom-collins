@@ -126,14 +126,14 @@ describe("Fields:", function () {
                 let obj = getValidObjectForNumericTests();
                 delete obj.positiveFloatMax10;
                 TC.parse(ForNumericTests, obj);
-            });
+            }, /required/i);
         });
     });
     describe("Float fields:", function () {
         it("should reject an empty object", function () {
             Assert.throws(() => {
                 TC.parse(ForNumericTests, {});
-            });
+            }, /required/i);
         });
         it("should parse a float from a string", function () {
             let obj = getValidObjectForNumericTests();
@@ -146,42 +146,42 @@ describe("Fields:", function () {
                 let obj = getValidObjectForNumericTests();
                 obj.optionalFloat = "a123";
                 TC.parse(ForNumericTests, obj);
-            });
+            }, /failed to map/i);
         });
         it("should enforce a positive value", function () {
             Assert.throws(() => {
                 let obj = getValidObjectForNumericTests();
                 obj.positiveFloatMax10 = "-0.1";
                 TC.parse(ForNumericTests, obj);
-            });
+            }, /value must be equal or greater than/i);
         });
         it("should enforce a maximum value", function () {
             Assert.throws(() => {
                 let obj = getValidObjectForNumericTests();
                 obj.positiveFloatMax10 = "10.1";
                 TC.parse(ForNumericTests, obj);
-            });
+            }, /value must be equal or less than/i);
         });
         it("should not allow zero in notZero float", function () {
             Assert.throws(() => {
                 let obj = getValidObjectForNumericTests();
                 obj.positiveFloatNotZero = "0";
                 TC.parse(ForNumericTests, obj);
-            });
+            }, /value must be greater than/i);
         });
         it("should enforce a negative value", function () {
             Assert.throws(() => {
                 let obj = getValidObjectForNumericTests();
                 obj.negativeFloatMinExclusiveMinus10 = "0.1";
                 TC.parse(ForNumericTests, obj);
-            });
+            }, /value must be equal or less than/i);
         });
         it("should enforce an exclusive minimum", function () {
             Assert.throws(() => {
                 let obj = getValidObjectForNumericTests();
                 obj.negativeFloatMinExclusiveMinus10 = "-10";
                 TC.parse(ForNumericTests, obj);
-            });
+            }, /value must be greater than/i);
         });
     });
     describe("Integer fields:", function () {
@@ -196,7 +196,7 @@ describe("Fields:", function () {
                 let obj = getValidObjectForNumericTests();
                 obj.integer = "0.1";
                 TC.parse(ForNumericTests, obj);
-            });
+            }, /value must be a multiple of 1/i);
         });
         it("should handle multipleOf correctly", function () {
             let obj = getValidObjectForNumericTests();
@@ -207,14 +207,14 @@ describe("Fields:", function () {
                 let objB = getValidObjectForNumericTests();
                 objB.integerMultipleOf3 = "5";
                 TC.parse(ForNumericTests, objB);
-            });
+            }, /value must be a multiple of/i);
         });
     });
     describe("String fields:", function () {
         it("should reject an empty object", function () {
             Assert.throws(() => {
                 TC.parse(ForStringTests, {});
-            });
+            }, /required/i);
         });
         it("should handle valid object correctly", function () {
             let obj = getValidObjectForStringTests();
@@ -229,12 +229,12 @@ describe("Fields:", function () {
                 let objB = getValidObjectForStringTests();
                 objB.stringMin5Max10 = "1234";
                 TC.parse(ForStringTests, objB);
-            });
+            }, /String length constraint violation/i);
             Assert.throws(() => {
                 let objB = getValidObjectForStringTests();
                 objB.stringMin5Max10 = "1234567891011";
                 TC.parse(ForStringTests, objB);
-            });
+            }, /String length constraint violation/i);
         });
         it("should handle optional strings correctly", function () {
             let obj = getValidObjectForStringTests();
@@ -249,7 +249,7 @@ describe("Fields:", function () {
                 let objB = getValidObjectForStringTests();
                 objB.bananaOrApple = "pear";
                 TC.parse(ForStringTests, objB);
-            });
+            }, /must match match the pattern/i);
         });
         it("should handle email correctly", function () {
             let obj = getValidObjectForStringTests();
@@ -260,7 +260,7 @@ describe("Fields:", function () {
                 let objB = getValidObjectForStringTests();
                 objB.email = "1234";
                 TC.parse(ForStringTests, objB);
-            });
+            }, /must match match the pattern/i);
         });
         it("should handle string not empty correctly", function () {
             let obj = getValidObjectForStringTests();
@@ -271,7 +271,7 @@ describe("Fields:", function () {
                 let objB = getValidObjectForStringTests();
                 objB.stringNotEmpty = "";
                 TC.parse(ForStringTests, objB);
-            });
+            }, /String length constraint violation/i);
         });
         it("should handle string not whitespace correctly", function () {
             let obj = getValidObjectForStringTests();
@@ -283,14 +283,14 @@ describe("Fields:", function () {
                 objB.stringNotWhitespace = `
                     `;
                 TC.parse(ForStringTests, objB);
-            });
+            }, /must match match the pattern/i);
         });
     });
     describe("Boolean fields:", function () {
         it("should reject an empty object", function () {
             Assert.throws(() => {
                 TC.parse(ForBooleanTests, {});
-            });
+            }, /required/i);
         });
         it("should handle valid objects correctly", function () {
             let obj = getValidObjectForBooleanTests();
@@ -299,12 +299,12 @@ describe("Fields:", function () {
                 let objB = getValidObjectForStringTests();
                 objB.bool = "banana";
                 TC.parse(ForBooleanTests, objB);
-            });
+            }, /Invalid string to boolean cast/i);
             Assert.throws(() => {
                 let objB = getValidObjectForStringTests();
-                delete objB.bool;
+                objB.bool = new Date();
                 TC.parse(ForBooleanTests, objB);
-            });
+            }, /Invalid type, expected 'Boolean'/i);
         });
         it("should handle strings correctly", function () {
             let obj = getValidObjectForStringTests();
@@ -312,9 +312,17 @@ describe("Fields:", function () {
             obj = TC.parse(ForBooleanTests, obj);
             Assert.equal(obj.bool, true);
             obj = getValidObjectForStringTests();
+            obj.bool = "fAlSe";
+            obj = TC.parse(ForBooleanTests, obj);
+            Assert.equal(obj.bool, false);
+            obj = getValidObjectForStringTests();
             obj.bool = "1";
             obj = TC.parse(ForBooleanTests, obj);
             Assert.equal(obj.bool, true);
+            obj = getValidObjectForStringTests();
+            obj.bool = "0";
+            obj = TC.parse(ForBooleanTests, obj);
+            Assert.equal(obj.bool, false);
         });
         it("should handle numbers correctly", function () {
             let obj = getValidObjectForStringTests();
