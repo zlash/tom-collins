@@ -4,3 +4,5 @@ export declare function StringNotWhitespace(required?: boolean, maxLength?: numb
 export declare function Email(required?: boolean): (target: any, propertyKey: string | symbol) => void;
 export declare function String(required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern): (target: any, propertyKey: string | symbol) => void;
 export declare function Boolean(required?: boolean): (target: any, propertyKey: string | symbol) => void;
+export declare function Date(required?: boolean): (target: any, propertyKey: string | symbol) => void;
+export declare function CustomDate(format: string, required?: boolean, nonStrict?: boolean): (target: any, propertyKey: string | symbol) => void;

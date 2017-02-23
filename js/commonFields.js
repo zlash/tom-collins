@@ -60,4 +60,22 @@ function Boolean(required) {
     });
 }
 exports.Boolean = Boolean;
+function Date(required) {
+    return TC.Field({
+        required: required,
+        maps: [
+            Maps.PredefinedMaps.stringToDate
+        ]
+    });
+}
+exports.Date = Date;
+function CustomDate(format, required = true, nonStrict = false) {
+    return TC.Field({
+        required: required,
+        maps: [
+            Maps.PredefinedMaps.stringToCustomDate(format, nonStrict)
+        ]
+    });
+}
+exports.CustomDate = CustomDate;
 //# sourceMappingURL=commonFields.js.map

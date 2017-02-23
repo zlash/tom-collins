@@ -24,6 +24,7 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
+const Moment = require("moment");
 class Map {
 }
 exports.Map = Map;
@@ -31,11 +32,27 @@ exports.Map = Map;
  * Predefined maps.
  */
 class PredefinedMaps {
+    static stringToCustomDate(format, nonStrict) {
+        return {
+            type: String,
+            map: (v) => {
+                let m = Moment(v, format, !(nonStrict === true));
+                if (!m.isValid()) {
+                    throw new Error("Failed to map string to date, invalid string.");
+                }
+                return m.toDate();
+            }
+        };
+    }
 }
 PredefinedMaps.stringToDate = {
     type: String,
     map: (v) => {
-        return new Date(v);
+        let m = Moment(v, Moment.ISO_8601);
+        if (!m.isValid()) {
+            throw new Error("Failed to map string to date, invalid string.");
+        }
+        return m.toDate();
     }
 };
 PredefinedMaps.stringToNumber = {

@@ -61,3 +61,21 @@ export function Boolean(required?: boolean) {
         ]
     });
 }
+
+export function Date(required?: boolean) {
+    return TC.Field({
+        required: required,
+        maps: [
+            Maps.PredefinedMaps.stringToDate
+        ]
+    });
+}
+
+export function CustomDate(format: string, required = true, nonStrict = false) {
+    return TC.Field({
+        required: required,
+        maps: [
+            Maps.PredefinedMaps.stringToCustomDate(format, nonStrict)
+        ]
+    });
+}

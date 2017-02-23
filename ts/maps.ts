@@ -24,6 +24,8 @@ SOFTWARE.
 
 *********************************************************************************/
 
+import * as Moment from "moment";
+
 export class Map {
     type: any;
     map: (v: any) => any;
@@ -36,9 +38,26 @@ export class PredefinedMaps {
     static stringToDate: Map = {
         type: String,
         map: (v: string) => {
-            return new Date(v);
+            let m = Moment(v, Moment.ISO_8601);
+            if (!m.isValid()) {
+                throw new Error("Failed to map string to date, invalid string.");
+            }
+            return m.toDate();
         }
     };
+
+    static stringToCustomDate(format: string, nonStrict?: boolean): Map {
+        return {
+            type: String,
+            map: (v: string) => {
+                let m = Moment(v, format, !(nonStrict === true));
+                if (!m.isValid()) {
+                    throw new Error("Failed to map string to date, invalid string.");
+                }
+                return m.toDate();
+            }
+        };
+    }
 
     static stringToNumber: Map = {
         type: String,

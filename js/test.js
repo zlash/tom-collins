@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 const TC = require("./index");
 const Assert = require("assert");
+const Moment = require("moment");
 class ForNumericTests {
 }
 __decorate([
@@ -112,6 +113,22 @@ __decorate([
 function getValidObjectForBooleanTests() {
     return {
         bool: true,
+    };
+}
+class ForDateTests {
+}
+__decorate([
+    TC.Date(),
+    __metadata("design:type", Date)
+], ForDateTests.prototype, "date", void 0);
+__decorate([
+    TC.CustomDate("MM YYYY DD"),
+    __metadata("design:type", Date)
+], ForDateTests.prototype, "customDate", void 0);
+function getValidObjectForDateTests() {
+    return {
+        date: new Date(),
+        customDate: new Date(),
     };
 }
 describe("Fields:", function () {
@@ -333,6 +350,55 @@ describe("Fields:", function () {
             obj.bool = 0;
             obj = TC.parse(ForBooleanTests, obj);
             Assert.equal(obj.bool, false);
+        });
+    });
+    describe("Date fields:", function () {
+        it("should reject an empty object", function () {
+            Assert.throws(() => {
+                TC.parse(ForDateTests, {});
+            }, /required/i);
+        });
+        it("should handle valid objects correctly", function () {
+            let obj = getValidObjectForDateTests();
+            TC.parse(ForDateTests, obj);
+            Assert.throws(() => {
+                let objB = getValidObjectForDateTests();
+                objB.date = "banana";
+                TC.parse(ForDateTests, objB);
+            }, /Failed to map string to date/i);
+            Assert.throws(() => {
+                let objB = getValidObjectForStringTests();
+                objB.date = 1;
+                TC.parse(ForDateTests, objB);
+            }, /Invalid type, expected 'Date'/i);
+        });
+        it("should handle ISO-8601 strings correctly", function () {
+            let obj = getValidObjectForDateTests();
+            obj.date = "2017-02-23T19:01:50Z";
+            obj = TC.parse(ForDateTests, obj);
+            let dateA = obj.date;
+            obj = getValidObjectForDateTests();
+            obj.date = "20170223T190150Z";
+            obj = TC.parse(ForDateTests, obj);
+            let dateB = obj.date;
+            obj = getValidObjectForDateTests();
+            obj.date = "2017-02-23T16:01:50-03:00";
+            obj = TC.parse(ForDateTests, obj);
+            let dateC = obj.date;
+            Assert(Moment(dateA).isSame(dateB));
+            Assert(Moment(dateA).isSame(dateC));
+            Assert(Moment(dateB).isSame(dateC));
+        });
+        it("should handle custom strings correctly", function () {
+            let obj = getValidObjectForDateTests();
+            obj.customDate = "02 2017 23";
+            obj = TC.parse(ForDateTests, obj);
+            Assert(Moment("2017-02-23").isSame(obj.customDate));
+            Assert.throws(() => {
+                let objB = getValidObjectForDateTests();
+                objB.customDate = "23 2017 02";
+                objB = TC.parse(ForDateTests, objB);
+            }, /Failed to map string to date/i);
         });
     });
 });
