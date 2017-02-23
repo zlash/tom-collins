@@ -86,6 +86,16 @@ function getValidObjectForStringTests(): any {
     };
 }
 
+class ForBooleanTests {
+    @TC.Boolean()
+    bool: boolean;
+}
+
+function getValidObjectForBooleanTests(): any {
+    return {
+        bool: true,
+    };
+}
 
 describe("Fields:", function () {
 
@@ -106,6 +116,12 @@ describe("Fields:", function () {
     });
 
     describe("Float fields:", function () {
+
+        it("should reject an empty object", function () {
+            Assert.throws(() => {
+                TC.parse(ForNumericTests, {});
+            });
+        });
 
         it("should parse a float from a string", function () {
             let obj = getValidObjectForNumericTests();
@@ -199,6 +215,12 @@ describe("Fields:", function () {
 
     describe("String fields:", function () {
 
+        it("should reject an empty object", function () {
+            Assert.throws(() => {
+                TC.parse(ForStringTests, {});
+            });
+        });
+
         it("should handle valid object correctly", function () {
             let obj = getValidObjectForStringTests();
             TC.parse(ForStringTests, obj);
@@ -283,6 +305,54 @@ describe("Fields:", function () {
             });
         });
 
+    });
+
+    describe("Boolean fields:", function () {
+
+        it("should reject an empty object", function () {
+            Assert.throws(() => {
+                TC.parse(ForBooleanTests, {});
+            });
+        });
+
+        it("should handle valid objects correctly", function () {
+            let obj = getValidObjectForBooleanTests();
+            TC.parse(ForBooleanTests, obj);
+            Assert.throws(() => {
+                let objB = getValidObjectForStringTests();
+                objB.bool = "banana";
+                TC.parse(ForBooleanTests, objB);
+            });
+            Assert.throws(() => {
+                let objB = getValidObjectForStringTests();
+                delete objB.bool;
+                TC.parse(ForBooleanTests, objB);
+            });
+        });
+
+        it("should handle strings correctly", function () {
+            let obj = getValidObjectForStringTests();
+            obj.bool = "TrUe";
+            obj = TC.parse(ForBooleanTests, obj);
+            Assert.equal(obj.bool, true);
+
+            obj = getValidObjectForStringTests();
+            obj.bool = "1";
+            obj = TC.parse(ForBooleanTests, obj);
+            Assert.equal(obj.bool, true);
+        });
+
+        it("should handle numbers correctly", function () {
+            let obj = getValidObjectForStringTests();
+            obj.bool = 1;
+            obj = TC.parse(ForBooleanTests, obj);
+            Assert.equal(obj.bool, true);
+
+            obj = getValidObjectForStringTests();
+            obj.bool = 0;
+            obj = TC.parse(ForBooleanTests, obj);
+            Assert.equal(obj.bool, false);
+        });
     });
 
 });

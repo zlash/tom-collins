@@ -25,6 +25,7 @@ SOFTWARE.
 *********************************************************************************/
 "use strict";
 const TC = require("./tom-collins");
+const Maps = require("./maps");
 const Patterns = require("./patterns");
 function StringNotEmpty(required, maxLength, pattern) {
     return String(required, 1, maxLength, pattern);
@@ -49,4 +50,14 @@ function String(required, minLength, maxLength, pattern) {
     });
 }
 exports.String = String;
+function Boolean(required) {
+    return TC.Field({
+        required: required,
+        maps: [
+            Maps.PredefinedMaps.stringToBoolean,
+            Maps.PredefinedMaps.numberToBoolean
+        ]
+    });
+}
+exports.Boolean = Boolean;
 //# sourceMappingURL=commonFields.js.map

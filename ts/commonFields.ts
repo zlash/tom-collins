@@ -25,6 +25,7 @@ SOFTWARE.
 *********************************************************************************/
 
 import * as TC from "./tom-collins";
+import * as Maps from "./maps";
 import * as Fields from "./fields";
 import * as Patterns from "./patterns";
 
@@ -51,3 +52,12 @@ export function String(required?: boolean, minLength?: number, maxLength?: numbe
     });
 }
 
+export function Boolean(required?: boolean) {
+    return TC.Field({
+        required: required,
+        maps: [
+            Maps.PredefinedMaps.stringToBoolean,
+            Maps.PredefinedMaps.numberToBoolean
+        ]
+    });
+}

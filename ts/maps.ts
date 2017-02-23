@@ -51,5 +51,29 @@ export class PredefinedMaps {
         }
     };
 
+    static stringToBoolean: Map = {
+        type: String,
+        map: (v: string) => {
+            if (v.toUpperCase() === "TRUE" || v === "1") {
+                return true;
+            }
+            if (v.toUpperCase() === "FALSE" || v === "0") {
+                return false;
+            }
+            throw new Error("Invalid string to boolean cast (Expected values: 'true' or 'false')");
+        }
+    };
 
+    static numberToBoolean: Map = {
+        type: Number,
+        map: (v: number) => {
+            if (v === 1) {
+                return true;
+            }
+            if (v === 0) {
+                return false;
+            }
+            throw new Error("Invalid number to boolean cast (Expected values: 0 or 1)");
+        }
+    };
 }
