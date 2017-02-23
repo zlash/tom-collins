@@ -116,19 +116,6 @@ function checkPODtype(obj: any, podType: any) {
     return false;
 }
 
-export function parseString(value: any, constraints?: StringConstraints & { optional?: boolean; }): string {
-    value = value.toString();
-    return parseValue(String, value, constraints) as string;
-}
-
-export function parseInt(value: any, constraints?: NumberConstraints & { optional?: boolean; }): number {
-    return parseValue(Number, value, constraints, [Maps.PredefinedMaps.stringToInt]) as number;
-}
-
-export function parseFloat(value: any, constraints?: NumberConstraints & { optional?: boolean; }): number {
-    return parseValue(Number, value, constraints, [Maps.PredefinedMaps.stringToNumber]) as number;
-}
-
 export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints & { optional?: boolean; }, maps?: Maps.Map[]): T {
 
     if (value == undefined) {
@@ -173,8 +160,13 @@ export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, 
         } else if (typeof (value) === "number" || value instanceof Number) {
 
             let constraintsN = constraints as NumberConstraints;
-            if (constraintsN.multipleOf != undefined && (value as number) % constraintsN.multipleOf !== 0) {
-                throw new Error(`Numeric constaint violation, value must be a multiple of ${constraintsN.multipleOf}`);
+            if (constraintsN.multipleOf != undefined) {
+                if (constraintsN.multipleOf <= 0) {
+                    throw new Error("multipleOf must be greater than 0.");
+                }
+                if ((value as number) % constraintsN.multipleOf !== 0) {
+                    throw new Error(`Numeric constaint violation, value must be a multiple of ${constraintsN.multipleOf}`);
+                }
             }
 
             if (constraintsN.minimum != undefined) {

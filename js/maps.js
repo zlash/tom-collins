@@ -48,15 +48,5 @@ PredefinedMaps.stringToNumber = {
         return ret;
     }
 };
-PredefinedMaps.stringToInt = {
-    type: String,
-    map: (v) => {
-        let ret = parseInt(v, 10);
-        if (isNaN(ret)) {
-            throw new Error("Failed to map string to int.");
-        }
-        return ret;
-    }
-};
 exports.PredefinedMaps = PredefinedMaps;
 //# sourceMappingURL=maps.js.map

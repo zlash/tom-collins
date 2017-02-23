@@ -154,7 +154,7 @@ function getTextRepresentation(type) {
                 extraConstraints.push(`Number must be a multiple of: ${fieldOptions.typeConstraints.multipleOf}`);
             }
             if (fieldOptions.typeConstraints.minimum != undefined) {
-                extraConstraints.push(`Number must be ${fieldOptions.typeConstraints.exclusiveMinimum === true ? " " : " equal or "}greater than ${fieldOptions.typeConstraints.minimum}`);
+                extraConstraints.push(`Number must be ${fieldOptions.typeConstraints.exclusiveMinimum === true ? " " : " equal or "}greater than ${fieldOptions.typeConstraints.minimum}`); // tslint:disable-line  
             }
             if (fieldOptions.typeConstraints.maximum) {
                 extraConstraints.push(`Number must be${fieldOptions.typeConstraints.exclusiveMaximum === true ? " " : " equal or "}less than ${fieldOptions.typeConstraints.maximum}`);

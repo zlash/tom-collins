@@ -8,7 +8,7 @@
     "js"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/.bin/mocha js/test.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,10 @@
   },
   "homepage": "https://github.com/zlash/tom-collins#readme",
   "dependencies": {
+    "@types/node": "^7.0.5",
     "reflect-metadata": "^0.1.9"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0"
   }
 }

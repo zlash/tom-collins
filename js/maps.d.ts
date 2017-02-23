@@ -33,5 +33,4 @@ export declare class Map {
 export declare class PredefinedMaps {
     static stringToDate: Map;
     static stringToNumber: Map;
-    static stringToInt: Map;
 }

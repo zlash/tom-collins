@@ -24,7 +24,6 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
-const Maps = require("./maps");
 var PredefinedPattern;
 (function (PredefinedPattern) {
     PredefinedPattern[PredefinedPattern["Email"] = 0] = "Email";
@@ -71,19 +70,6 @@ function checkPODtype(obj, podType) {
     }
     return false;
 }
-function parseString(value, constraints) {
-    value = value.toString();
-    return parseValue(String, value, constraints);
-}
-exports.parseString = parseString;
-function parseInt(value, constraints) {
-    return parseValue(Number, value, constraints, [Maps.PredefinedMaps.stringToInt]);
-}
-exports.parseInt = parseInt;
-function parseFloat(value, constraints) {
-    return parseValue(Number, value, constraints, [Maps.PredefinedMaps.stringToNumber]);
-}
-exports.parseFloat = parseFloat;
 function parseValue(targetType, value, constraints, maps) {
     if (value == undefined) {
         if (constraints != undefined && constraints.optional !== true) {
@@ -120,8 +106,13 @@ function parseValue(targetType, value, constraints, maps) {
         }
         else if (typeof (value) === "number" || value instanceof Number) {
             let constraintsN = constraints;
-            if (constraintsN.multipleOf != undefined && value % constraintsN.multipleOf !== 0) {
-                throw new Error(`Numeric constaint violation, value must be a multiple of ${constraintsN.multipleOf}`);
+            if (constraintsN.multipleOf != undefined) {
+                if (constraintsN.multipleOf <= 0) {
+                    throw new Error("multipleOf must be greater than 0.");
+                }
+                if (value % constraintsN.multipleOf !== 0) {
+                    throw new Error(`Numeric constaint violation, value must be a multiple of ${constraintsN.multipleOf}`);
+                }
             }
             if (constraintsN.minimum != undefined) {
                 let violation = value < constraintsN.minimum;

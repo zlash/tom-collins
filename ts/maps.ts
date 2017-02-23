@@ -51,16 +51,5 @@ export class PredefinedMaps {
         }
     };
 
-    static stringToInt: Map = {
-        type: String,
-        map: (v: string) => {
-            let ret = parseInt(v, 10);
-            if (isNaN(ret)) {
-                throw new Error("Failed to map string to int.");
-            }
-            return ret;
-        }
-    };
-
 
 }

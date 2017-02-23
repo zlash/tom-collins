@@ -208,7 +208,7 @@ export function getTextRepresentation<T>(type: GenericConstructor<T>) {
             }
 
             if ((fieldOptions.typeConstraints as NC).minimum != undefined) {
-                extraConstraints.push(`Number must be ${(fieldOptions.typeConstraints as NC).exclusiveMinimum === true ? " " : " equal or "}greater than ${(fieldOptions.typeConstraints as NC).minimum}`);
+                extraConstraints.push(`Number must be ${(fieldOptions.typeConstraints as NC).exclusiveMinimum === true ? " " : " equal or "}greater than ${(fieldOptions.typeConstraints as NC).minimum}`); // tslint:disable-line  
             }
 
             if ((fieldOptions.typeConstraints as NC).maximum) {
