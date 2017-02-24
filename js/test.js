@@ -596,15 +596,15 @@ describe("Direct Parse Functions:", function () {
             }, /Value is undefined and not optional/i);
             Assert.throws(() => {
                 TC.parseCustomDate("1/1/2012", customDateFormat);
-            }, /t45t/i);
+            }, /Failed to map string to date/i);
             Assert.throws(() => {
                 TC.parseCustomDate("13 2012 1", customDateFormat);
-            }, /t45t/i);
+            }, /Failed to map string to date/i);
             Assert.throws(() => {
                 TC.parseCustomDate(1, customDateFormat);
-            }, /twft4/i);
+            }, /Invalid type/i);
             Assert.equal(undefined, TC.parseCustomDate(undefined, customDateFormat, false));
-            Assert(Moment("2017-02-23").isSame(TC.parseCustomDate("2 2017 23", customDateFormat)));
+            Assert(Moment("2017-02-23").isSame(TC.parseCustomDate("02 2017 23", customDateFormat)));
         });
     });
 });
