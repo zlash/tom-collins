@@ -13,5 +13,9 @@ export declare function StringBase(t: any, required?: boolean, minLength?: numbe
 export declare function parseBoolean(value: any, required?: boolean): any;
 export declare function BooleanField(required?: boolean): any;
 export declare function BooleanBase(t: any, required?: boolean): any;
-export declare function DateField(required?: boolean): (target: any, propertyKey: string | symbol) => void;
-export declare function CustomDate(format: string, required?: boolean, nonStrict?: boolean): (target: any, propertyKey: string | symbol) => void;
+export declare function parseDate(value: any, required?: boolean): any;
+export declare function DateField(required?: boolean): any;
+export declare function DateBase(t: any, required?: boolean): any;
+export declare function parseCustomDate(value: any, format: string, required?: boolean, nonStrict?: boolean): any;
+export declare function CustomDate(format: string, required?: boolean, nonStrict?: boolean): any;
+export declare function CustomDateBase(t: any, format: string, required?: boolean, nonStrict?: boolean): any;

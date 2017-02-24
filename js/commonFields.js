@@ -106,24 +106,40 @@ function BooleanBase(t, required) {
     });
 }
 exports.BooleanBase = BooleanBase;
+function parseDate(value, required) {
+    return DateBase(individualParser(Date), required)(value);
+}
+exports.parseDate = parseDate;
 function DateField(required) {
-    return TC.Field({
+    return DateBase(TC.Field, required);
+}
+exports.DateField = DateField;
+function DateBase(t, required) {
+    return t({
         required: required,
         maps: [
             Maps.PredefinedMaps.stringToDate
         ]
     });
 }
-exports.DateField = DateField;
+exports.DateBase = DateBase;
+function parseCustomDate(value, format, required = true, nonStrict = false) {
+    return CustomDateBase(individualParser(Date), format, required, nonStrict)(value);
+}
+exports.parseCustomDate = parseCustomDate;
 function CustomDate(format, required = true, nonStrict = false) {
-    return TC.Field({
+    return CustomDateBase(TC.Field, format, required, nonStrict);
+}
+exports.CustomDate = CustomDate;
+function CustomDateBase(t, format, required = true, nonStrict = false) {
+    return t({
         required: required,
         maps: [
             Maps.PredefinedMaps.stringToCustomDate(format, nonStrict)
         ]
     });
 }
-exports.CustomDate = CustomDate;
+exports.CustomDateBase = CustomDateBase;
 function individualParser(targetType) {
     return (options) => {
         return (value) => {

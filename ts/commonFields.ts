@@ -99,8 +99,16 @@ export function BooleanBase(t: any, required?: boolean) {
     });
 }
 
+export function parseDate(value: any, required?: boolean) {
+    return DateBase(individualParser(Date), required)(value);
+}
+
 export function DateField(required?: boolean) {
-    return TC.Field({
+    return DateBase(TC.Field, required);
+}
+
+export function DateBase(t: any, required?: boolean) {
+    return t({
         required: required,
         maps: [
             Maps.PredefinedMaps.stringToDate
@@ -108,8 +116,16 @@ export function DateField(required?: boolean) {
     });
 }
 
+export function parseCustomDate(value: any, format: string, required = true, nonStrict = false) {
+    return CustomDateBase(individualParser(Date), format, required, nonStrict)(value);
+}
+
 export function CustomDate(format: string, required = true, nonStrict = false) {
-    return TC.Field({
+    return CustomDateBase(TC.Field, format, required, nonStrict);
+}
+
+export function CustomDateBase(t: any, format: string, required = true, nonStrict = false) {
+    return t({
         required: required,
         maps: [
             Maps.PredefinedMaps.stringToCustomDate(format, nonStrict)

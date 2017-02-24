@@ -657,7 +657,27 @@ describe("Direct Parse Functions:", function () {
     });
 
     describe("Dates:", function () {
+        it("should parse dates", function () {
+            Assert.throws(() => {
+                TC.parseDate(undefined);
+            }, /Value is undefined and not optional/i);
 
+            Assert.throws(() => {
+                TC.parseDate("bananana");
+            }, /Failed to map string to date/i);
+
+            Assert.throws(() => {
+                TC.parseDate(1);
+            }, /Invalid type/i);
+
+            let dateA = TC.parseDate("2017-02-23T19:01:50Z");
+            let dateB = TC.parseDate("20170223T190150Z");
+            let dateC = TC.parseDate("2017-02-23T16:01:50-03:00");
+
+            Assert(Moment(dateA).isSame(dateB));
+            Assert(Moment(dateA).isSame(dateC));
+            Assert(Moment(dateB).isSame(dateC));
+        });
     });
 
 });
