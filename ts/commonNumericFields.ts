@@ -104,7 +104,7 @@ export function parsePositiveFloat(value: any, required?: boolean, max?: number,
 }
 
 export function parseInteger(value: any, required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
-    return integerParser(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+    return integerParser(required, min, max, exclusiveMin, exclusiveMax, multipleOf)(value);
 }
 
 function integerParser(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {

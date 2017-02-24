@@ -30,22 +30,22 @@ import * as Fields from "./fields";
 import * as Patterns from "./patterns";
 
 export function StringNotEmpty(required?: boolean, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
-    return String(required, 1, maxLength, pattern);
+    return StringField(required, 1, maxLength, pattern);
 }
 
 export function StringNotWhitespace(required?: boolean, maxLength?: number) {
-    return String(required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace);
+    return StringField(required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace);
 }
 
 export function Email(required?: boolean) {
-    return String(required, 1, undefined, Patterns.PredefinedPatterns.email);
+    return StringField(required, 1, undefined, Patterns.PredefinedPatterns.email);
 }
 
 export function StringPattern(pattern: Fields.StringConstraintPattern, required?: boolean, minLength?: number, maxLength?: number) {
-    return String(required, minLength, maxLength, pattern);
+    return StringField(required, minLength, maxLength, pattern);
 }
 
-export function String(required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
+export function StringField(required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
     return TC.Field({
         required: required,
         typeConstraints: {
@@ -56,8 +56,17 @@ export function String(required?: boolean, minLength?: number, maxLength?: numbe
     });
 }
 
-export function Boolean(required?: boolean) {
-    return TC.Field({
+
+export function parseBoolean(value: any, required?: boolean) {
+    return BooleanBase(individualParser(Boolean), required)(value);
+}
+
+export function BooleanField(required?: boolean) {
+    return BooleanBase(TC.Field, required);
+}
+
+export function BooleanBase(t: any, required?: boolean) {
+    return t({
         required: required,
         maps: [
             Maps.PredefinedMaps.stringToBoolean,
@@ -66,7 +75,15 @@ export function Boolean(required?: boolean) {
     });
 }
 
-export function Date(required?: boolean) {
+function individualParser<T>(targetType: TC.GenericConstructor<T>) {
+    return (options: TC.FieldOptions) => {
+        return (value: any) => {
+            return Fields.parseValue(targetType, value, { ...options.typeConstraints, optional: (options.required === false) }, options.maps);
+        };
+    };
+}
+
+export function DateField(required?: boolean) {
     return TC.Field({
         required: required,
         maps: [

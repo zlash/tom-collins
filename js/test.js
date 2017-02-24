@@ -75,7 +75,7 @@ function getValidObjectForNumericTests() {
 class ForStringTests {
 }
 __decorate([
-    TC.String(true, 5, 10),
+    TC.StringField(true, 5, 10),
     __metadata("design:type", String)
 ], ForStringTests.prototype, "stringMin5Max10", void 0);
 __decorate([
@@ -107,7 +107,7 @@ function getValidObjectForStringTests() {
 class ForBooleanTests {
 }
 __decorate([
-    TC.Boolean(),
+    TC.BooleanField(),
     __metadata("design:type", Boolean)
 ], ForBooleanTests.prototype, "bool", void 0);
 function getValidObjectForBooleanTests() {
@@ -118,7 +118,7 @@ function getValidObjectForBooleanTests() {
 class ForDateTests {
 }
 __decorate([
-    TC.Date(),
+    TC.DateField(),
     __metadata("design:type", Date)
 ], ForDateTests.prototype, "date", void 0);
 __decorate([
@@ -466,8 +466,67 @@ describe("Direct Parse Functions:", function () {
         });
     });
     describe("Integers:", function () {
+        it("should parse integers", function () {
+            Assert.throws(() => {
+                TC.parseInteger("not a number");
+            }, /Failed to map string to number/i);
+            Assert.throws(() => {
+                TC.parseInteger(undefined);
+            }, /Value is undefined and not optional/i);
+            Assert.throws(() => {
+                TC.parseInteger("-1.2");
+            }, /value must be a multiple of 1/i);
+            Assert.throws(() => {
+                TC.parseInteger("123455.0002");
+            }, /value must be a multiple of 1/i);
+            Assert.equal(undefined, TC.parseInteger(undefined, false));
+            Assert.equal(5, TC.parseInteger("5"));
+        });
+        it("should parse positive integers", function () {
+            Assert.throws(() => {
+                TC.parsePositiveInteger("-5");
+            }, /value must be equal or greater than 0/i);
+            Assert.equal(5, TC.parsePositiveInteger("5"));
+        });
+        it("should parse negative integers", function () {
+            Assert.throws(() => {
+                TC.parseNegativeInteger("5");
+            }, /value must be equal or less than 0/i);
+            Assert.equal(-5, TC.parseNegativeInteger("-5"));
+        });
+        it("should parse positive/negative integers not zero", function () {
+            Assert.throws(() => {
+                TC.parsePositiveIntegerNotZero("0");
+            }, /value must be greater than 0/i);
+            Assert.throws(() => {
+                TC.parseNegativeIntegerNotZero("0");
+            }, /value must be less than 0/i);
+        });
     });
     describe("Booleans:", function () {
+        it("should parse booleans", function () {
+            Assert.throws(() => {
+                TC.parseBoolean("not a boolean");
+            }, /Invalid string to boolean cast/i);
+            Assert.throws(() => {
+                TC.parseBoolean(undefined);
+            }, /Value is undefined and not optional/i);
+            Assert.throws(() => {
+                TC.parseBoolean(new Date());
+            }, /Invalid type, expected 'Boolean'/i);
+            Assert.throws(() => {
+                TC.parseBoolean(5);
+            }, /Invalid number to boolean cast/i);
+            Assert.equal(undefined, TC.parseBoolean(undefined, false));
+            Assert.equal(true, TC.parseBoolean(true));
+            Assert.equal(true, TC.parseBoolean(1));
+            Assert.equal(true, TC.parseBoolean("tRuE"));
+            Assert.equal(true, TC.parseBoolean("1"));
+            Assert.equal(false, TC.parseBoolean(false));
+            Assert.equal(false, TC.parseBoolean(0));
+            Assert.equal(false, TC.parseBoolean("FalSE"));
+            Assert.equal(false, TC.parseBoolean("0"));
+        });
     });
     describe("Strings:", function () {
     });

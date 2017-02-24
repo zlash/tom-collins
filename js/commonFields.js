@@ -24,26 +24,35 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 const TC = require("./tom-collins");
 const Maps = require("./maps");
+const Fields = require("./fields");
 const Patterns = require("./patterns");
 function StringNotEmpty(required, maxLength, pattern) {
-    return String(required, 1, maxLength, pattern);
+    return StringField(required, 1, maxLength, pattern);
 }
 exports.StringNotEmpty = StringNotEmpty;
 function StringNotWhitespace(required, maxLength) {
-    return String(required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace);
+    return StringField(required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace);
 }
 exports.StringNotWhitespace = StringNotWhitespace;
 function Email(required) {
-    return String(required, 1, undefined, Patterns.PredefinedPatterns.email);
+    return StringField(required, 1, undefined, Patterns.PredefinedPatterns.email);
 }
 exports.Email = Email;
 function StringPattern(pattern, required, minLength, maxLength) {
-    return String(required, minLength, maxLength, pattern);
+    return StringField(required, minLength, maxLength, pattern);
 }
 exports.StringPattern = StringPattern;
-function String(required, minLength, maxLength, pattern) {
+function StringField(required, minLength, maxLength, pattern) {
     return TC.Field({
         required: required,
         typeConstraints: {
@@ -53,9 +62,17 @@ function String(required, minLength, maxLength, pattern) {
         }
     });
 }
-exports.String = String;
-function Boolean(required) {
-    return TC.Field({
+exports.StringField = StringField;
+function parseBoolean(value, required) {
+    return BooleanBase(individualParser(Boolean), required)(value);
+}
+exports.parseBoolean = parseBoolean;
+function BooleanField(required) {
+    return BooleanBase(TC.Field, required);
+}
+exports.BooleanField = BooleanField;
+function BooleanBase(t, required) {
+    return t({
         required: required,
         maps: [
             Maps.PredefinedMaps.stringToBoolean,
@@ -63,8 +80,15 @@ function Boolean(required) {
         ]
     });
 }
-exports.Boolean = Boolean;
-function Date(required) {
+exports.BooleanBase = BooleanBase;
+function individualParser(targetType) {
+    return (options) => {
+        return (value) => {
+            return Fields.parseValue(targetType, value, __assign({}, options.typeConstraints, { optional: (options.required === false) }), options.maps);
+        };
+    };
+}
+function DateField(required) {
     return TC.Field({
         required: required,
         maps: [
@@ -72,7 +96,7 @@ function Date(required) {
         ]
     });
 }
-exports.Date = Date;
+exports.DateField = DateField;
 function CustomDate(format, required = true, nonStrict = false) {
     return TC.Field({
         required: required,

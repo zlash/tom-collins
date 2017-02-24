@@ -3,7 +3,9 @@ export declare function StringNotEmpty(required?: boolean, maxLength?: number, p
 export declare function StringNotWhitespace(required?: boolean, maxLength?: number): (target: any, propertyKey: string | symbol) => void;
 export declare function Email(required?: boolean): (target: any, propertyKey: string | symbol) => void;
 export declare function StringPattern(pattern: Fields.StringConstraintPattern, required?: boolean, minLength?: number, maxLength?: number): (target: any, propertyKey: string | symbol) => void;
-export declare function String(required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern): (target: any, propertyKey: string | symbol) => void;
-export declare function Boolean(required?: boolean): (target: any, propertyKey: string | symbol) => void;
-export declare function Date(required?: boolean): (target: any, propertyKey: string | symbol) => void;
+export declare function StringField(required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern): (target: any, propertyKey: string | symbol) => void;
+export declare function parseBoolean(value: any, required?: boolean): any;
+export declare function BooleanField(required?: boolean): any;
+export declare function BooleanBase(t: any, required?: boolean): any;
+export declare function DateField(required?: boolean): (target: any, propertyKey: string | symbol) => void;
 export declare function CustomDate(format: string, required?: boolean, nonStrict?: boolean): (target: any, propertyKey: string | symbol) => void;
