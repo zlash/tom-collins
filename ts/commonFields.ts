@@ -29,25 +29,50 @@ import * as Maps from "./maps";
 import * as Fields from "./fields";
 import * as Patterns from "./patterns";
 
+export function parseStringNotEmpty(value: any, required?: boolean, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
+    return StringBase(individualParser(String), required, 1, maxLength, pattern)(value);
+}
+
 export function StringNotEmpty(required?: boolean, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
     return StringField(required, 1, maxLength, pattern);
+}
+
+export function parseStringNotWhitespace(value: any, required?: boolean, maxLength?: number) {
+    return StringBase(individualParser(String), required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace)(value);
 }
 
 export function StringNotWhitespace(required?: boolean, maxLength?: number) {
     return StringField(required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace);
 }
 
+export function parseEmail(value: any, required?: boolean) {
+    return StringBase(individualParser(String), required, 1, undefined, Patterns.PredefinedPatterns.email)(value);
+}
+
 export function Email(required?: boolean) {
     return StringField(required, 1, undefined, Patterns.PredefinedPatterns.email);
+}
+
+export function parseStringPattern(value: any, pattern: Fields.StringConstraintPattern, required?: boolean, minLength?: number, maxLength?: number) {
+    return StringBase(individualParser(String), required, minLength, maxLength, pattern)(value);
 }
 
 export function StringPattern(pattern: Fields.StringConstraintPattern, required?: boolean, minLength?: number, maxLength?: number) {
     return StringField(required, minLength, maxLength, pattern);
 }
 
+export function parseString(value: any, required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
+    return StringBase(individualParser(String), required, minLength, maxLength, pattern)(value);
+}
+
 export function StringField(required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
-    return TC.Field({
+    return StringBase(TC.Field, required, minLength, maxLength, pattern);
+}
+
+export function StringBase(t: any, required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
+    return t({
         required: required,
+        maps: Maps.PredefinedMaps.anyToString,
         typeConstraints: {
             minLength: minLength,
             maxLength: maxLength,
@@ -55,7 +80,6 @@ export function StringField(required?: boolean, minLength?: number, maxLength?: 
         }
     });
 }
-
 
 export function parseBoolean(value: any, required?: boolean) {
     return BooleanBase(individualParser(Boolean), required)(value);
@@ -75,14 +99,6 @@ export function BooleanBase(t: any, required?: boolean) {
     });
 }
 
-function individualParser<T>(targetType: TC.GenericConstructor<T>) {
-    return (options: TC.FieldOptions) => {
-        return (value: any) => {
-            return Fields.parseValue(targetType, value, { ...options.typeConstraints, optional: (options.required === false) }, options.maps);
-        };
-    };
-}
-
 export function DateField(required?: boolean) {
     return TC.Field({
         required: required,
@@ -99,4 +115,12 @@ export function CustomDate(format: string, required = true, nonStrict = false) {
             Maps.PredefinedMaps.stringToCustomDate(format, nonStrict)
         ]
     });
+}
+
+function individualParser<T>(targetType: TC.GenericConstructor<T>) {
+    return (options: TC.FieldOptions) => {
+        return (value: any) => {
+            return Fields.parseValue(targetType, value, { ...options.typeConstraints, optional: (options.required === false) }, options.maps);
+        };
+    };
 }

@@ -36,25 +36,50 @@ const TC = require("./tom-collins");
 const Maps = require("./maps");
 const Fields = require("./fields");
 const Patterns = require("./patterns");
+function parseStringNotEmpty(value, required, maxLength, pattern) {
+    return StringBase(individualParser(String), required, 1, maxLength, pattern)(value);
+}
+exports.parseStringNotEmpty = parseStringNotEmpty;
 function StringNotEmpty(required, maxLength, pattern) {
     return StringField(required, 1, maxLength, pattern);
 }
 exports.StringNotEmpty = StringNotEmpty;
+function parseStringNotWhitespace(value, required, maxLength) {
+    return StringBase(individualParser(String), required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace)(value);
+}
+exports.parseStringNotWhitespace = parseStringNotWhitespace;
 function StringNotWhitespace(required, maxLength) {
     return StringField(required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace);
 }
 exports.StringNotWhitespace = StringNotWhitespace;
+function parseEmail(value, required) {
+    return StringBase(individualParser(String), required, 1, undefined, Patterns.PredefinedPatterns.email)(value);
+}
+exports.parseEmail = parseEmail;
 function Email(required) {
     return StringField(required, 1, undefined, Patterns.PredefinedPatterns.email);
 }
 exports.Email = Email;
+function parseStringPattern(value, pattern, required, minLength, maxLength) {
+    return StringBase(individualParser(String), required, minLength, maxLength, pattern)(value);
+}
+exports.parseStringPattern = parseStringPattern;
 function StringPattern(pattern, required, minLength, maxLength) {
     return StringField(required, minLength, maxLength, pattern);
 }
 exports.StringPattern = StringPattern;
+function parseString(value, required, minLength, maxLength, pattern) {
+    return StringBase(individualParser(String), required, minLength, maxLength, pattern)(value);
+}
+exports.parseString = parseString;
 function StringField(required, minLength, maxLength, pattern) {
-    return TC.Field({
+    return StringBase(TC.Field, required, minLength, maxLength, pattern);
+}
+exports.StringField = StringField;
+function StringBase(t, required, minLength, maxLength, pattern) {
+    return t({
         required: required,
+        maps: Maps.PredefinedMaps.anyToString,
         typeConstraints: {
             minLength: minLength,
             maxLength: maxLength,
@@ -62,7 +87,7 @@ function StringField(required, minLength, maxLength, pattern) {
         }
     });
 }
-exports.StringField = StringField;
+exports.StringBase = StringBase;
 function parseBoolean(value, required) {
     return BooleanBase(individualParser(Boolean), required)(value);
 }
@@ -81,13 +106,6 @@ function BooleanBase(t, required) {
     });
 }
 exports.BooleanBase = BooleanBase;
-function individualParser(targetType) {
-    return (options) => {
-        return (value) => {
-            return Fields.parseValue(targetType, value, __assign({}, options.typeConstraints, { optional: (options.required === false) }), options.maps);
-        };
-    };
-}
 function DateField(required) {
     return TC.Field({
         required: required,
@@ -106,4 +124,11 @@ function CustomDate(format, required = true, nonStrict = false) {
     });
 }
 exports.CustomDate = CustomDate;
+function individualParser(targetType) {
+    return (options) => {
+        return (value) => {
+            return Fields.parseValue(targetType, value, __assign({}, options.typeConstraints, { optional: (options.required === false) }), options.maps);
+        };
+    };
+}
 //# sourceMappingURL=commonFields.js.map

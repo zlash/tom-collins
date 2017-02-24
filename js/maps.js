@@ -55,6 +55,12 @@ PredefinedMaps.stringToDate = {
         return m.toDate();
     }
 };
+PredefinedMaps.anyToString = {
+    type: "*",
+    map: (v) => {
+        return v.toString();
+    }
+};
 PredefinedMaps.stringToNumber = {
     type: String,
     map: (v) => {

@@ -59,6 +59,14 @@ export class PredefinedMaps {
         };
     }
 
+    static anyToString: Map = {
+        type: "*",
+        map: (v: string) => {
+            return v.toString();
+        }
+    };
+
+
     static stringToNumber: Map = {
         type: String,
         map: (v: string) => {

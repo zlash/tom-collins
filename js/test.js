@@ -98,7 +98,7 @@ function getValidObjectForStringTests() {
     return {
         optionalString: "",
         bananaOrApple: "banana",
-        stringMin5Max10: "1234567",
+        stringMin5Max10: 1234567,
         email: "a@b.com",
         stringNotEmpty: "string",
         stringNotWhitespace: "string",
@@ -529,6 +529,46 @@ describe("Direct Parse Functions:", function () {
         });
     });
     describe("Strings:", function () {
+        it("should parse strings", function () {
+            Assert.throws(() => {
+                TC.parseString(undefined);
+            }, /Value is undefined and not optional/i);
+            Assert.throws(() => {
+                TC.parseString("", undefined, 1);
+            }, /String length constraint violation/i);
+            Assert.throws(() => {
+                TC.parseString("12", undefined, undefined, 1);
+            }, /String length constraint violation/i);
+            Assert.equal(undefined, TC.parseString(undefined, false));
+            Assert.equal("true", TC.parseString(true));
+        });
+        it("should parse array patterns", function () {
+            Assert.equal("banana", TC.parseStringPattern("banana", ["banana", "apple"]));
+            Assert.throws(() => {
+                TC.parseStringPattern("lemon", ["banana", "apple"]);
+            }, /String pattern constraint violation/i);
+        });
+        it("should parse email", function () {
+            Assert.equal("mr.a@test.co.jp", TC.parseEmail("mr.a@test.co.jp"));
+            Assert.throws(() => {
+                TC.parseEmail("www.ddg.gg");
+            }, /String pattern constraint violation/i);
+        });
+        it("should parse string not whitespace", function () {
+            Assert.equal(" !", TC.parseStringNotWhitespace(" !"));
+            Assert.throws(() => {
+                TC.parseStringNotWhitespace(`
+                     
+                
+                `);
+            }, /String pattern constraint violation/i);
+        });
+        it("should parse string not empty", function () {
+            Assert.equal(" !", TC.parseStringNotEmpty(" !"));
+            Assert.throws(() => {
+                TC.parseStringNotEmpty("");
+            }, /String length constraint violation/i);
+        });
     });
     describe("Dates:", function () {
     });

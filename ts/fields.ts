@@ -125,7 +125,7 @@ export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, 
         }
 
         map_loop: for (let map of maps) {
-            if (checkPODtype(value, map.type) || value instanceof map.type) {
+            if (map.type === "*" || checkPODtype(value, map.type) || value instanceof map.type) {
                 value = map.map(value);
                 break map_loop;
             }
