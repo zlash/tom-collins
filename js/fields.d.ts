@@ -69,4 +69,4 @@ export declare class NumberConstraints {
 export declare function stringConstraintPatternToPattern(pattern: StringConstraintPattern): Patterns.Pattern;
 export declare function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints & {
     optional?: boolean;
-}, maps?: Maps.Map[]): T;
+}, maps?: Maps.Map | Maps.Map[]): T;

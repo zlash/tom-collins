@@ -26,6 +26,7 @@ SOFTWARE.
 
 import * as TC from "./tom-collins";
 import * as Maps from "./maps";
+import * as Fields from "./fields";
 
 export function NegativeIntegerNotZero(required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
     return NegativeNumberNotZero(Integer, required, min, exclusiveMin, multipleOf, max, exclusiveMax);
@@ -60,18 +61,85 @@ export function PositiveFloat(required?: boolean, max?: number, exclusiveMax?: b
 }
 
 export function Integer(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
+    return IntegerBase(TC.Field, required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+}
+
+export function Float(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
+    return FloatBase(TC.Field, required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+}
+
+
+// Direct parse functions
+
+export function parseNegativeIntegerNotZero(value: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
+    return NegativeNumberNotZero(integerParser, required, min, exclusiveMin, multipleOf, max, exclusiveMax)(value);
+}
+
+export function parsePositiveIntegerNotZero(value: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
+    return PositiveNumberNotZero(integerParser, required, max, exclusiveMax, multipleOf, min, exclusiveMin)(value);
+}
+
+export function parseNegativeInteger(value: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
+    return NegativeNumber(integerParser, required, min, exclusiveMin, multipleOf, max, exclusiveMax)(value);
+}
+
+export function parsePositiveInteger(value: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
+    return PositiveNumber(integerParser, required, max, exclusiveMax, multipleOf, min, exclusiveMin)(value);
+}
+
+export function parseNegativeFloatNotZero(value: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
+    return NegativeNumberNotZero(floatParser, required, min, exclusiveMin, multipleOf, max, exclusiveMax)(value);
+}
+
+export function parsePositiveFloatNotZero(value: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
+    return PositiveNumberNotZero(floatParser, required, max, exclusiveMax, multipleOf, min, exclusiveMin)(value);
+}
+
+export function parseNegativeFloat(value: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean) {
+    return NegativeNumber(floatParser, required, min, exclusiveMin, multipleOf, max, exclusiveMax)(value);
+}
+
+export function parsePositiveFloat(value: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean) {
+    return PositiveNumber(floatParser, required, max, exclusiveMax, multipleOf, min, exclusiveMin)(value);
+}
+
+export function parseInteger(value: any, required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
+    return integerParser(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+}
+
+function integerParser(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
+    return IntegerBase(individualNumericParser, required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+}
+
+export function parseFloat(value: any, required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
+    return floatParser(required, min, max, exclusiveMin, exclusiveMax, multipleOf)(value);
+}
+
+function floatParser(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
+    return FloatBase(individualNumericParser, required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+}
+
+function individualNumericParser(options: TC.FieldOptions) {
+    return (value: any) => {
+        return Fields.parseValue(Number, value, { ...options.typeConstraints, optional: (options.required === false) }, options.maps);
+    };
+}
+
+
+
+function IntegerBase(target: any, required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
     if (multipleOf == undefined) {
         multipleOf = 1.0;
     }
     if (Math.floor(multipleOf) !== multipleOf) {
         throw new Error("MultipleOf for integer values must be an integer.");
     }
-    return Float(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+    return FloatBase(target, required, min, max, exclusiveMin, exclusiveMax, multipleOf);
 }
 
 
-export function Float(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
-    return TC.Field({
+function FloatBase(target: any, required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number) {
+    return target({
         required: required,
         maps: Maps.PredefinedMaps.stringToNumber,
         typeConstraints: {

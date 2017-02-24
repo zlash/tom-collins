@@ -60,12 +60,6 @@ function fillImplicitFieldSettings(type) {
         for (let field of fields) {
             let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field) || new FieldOptions();
             fieldOptions.required = fieldOptions.required == undefined ? allRequired : fieldOptions.required;
-            if (fieldOptions.maps == undefined) {
-                fieldOptions.maps = [];
-            }
-            if (!(fieldOptions.maps instanceof Array)) {
-                fieldOptions.maps = [fieldOptions.maps];
-            }
             Reflect.defineMetadata("field:options", fieldOptions, type.prototype, field);
         }
         Reflect.defineMetadata("fields:options_explicited", true, type.prototype);
@@ -97,7 +91,7 @@ function parse(type, obj) {
                 }
             }
             else {
-                ret[field] = Fields.parseValue(fieldType, obj[field], __assign({}, fieldOptions.typeConstraints, { optional: fieldOptions.required !== true }), fieldOptions.maps);
+                ret[field] = Fields.parseValue(fieldType, obj[field], __assign({}, fieldOptions.typeConstraints, { optional: (fieldOptions.required === false) }), fieldOptions.maps);
             }
         }
         catch (err) {

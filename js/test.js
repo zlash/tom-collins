@@ -18,11 +18,11 @@ __decorate([
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "optionalFloat", void 0);
 __decorate([
-    TC.PositiveFloat(true, 10),
+    TC.PositiveFloat(undefined, 10),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "positiveFloatMax10", void 0);
 __decorate([
-    TC.NegativeFloat(true, -10, true),
+    TC.NegativeFloat(undefined, -10, true),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "negativeFloatMinExclusiveMinus10", void 0);
 __decorate([
@@ -38,11 +38,11 @@ __decorate([
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "integer", void 0);
 __decorate([
-    TC.PositiveInteger(true, 5, true),
+    TC.PositiveInteger(undefined, 5, true),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "positiveIntegerMaxExclusive5", void 0);
 __decorate([
-    TC.NegativeInteger(true, -5),
+    TC.NegativeInteger(undefined, -5),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "negativeIntegerMinMinus5", void 0);
 __decorate([
@@ -54,7 +54,7 @@ __decorate([
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "negativeIntegerNotZero", void 0);
 __decorate([
-    TC.Integer(true, undefined, undefined, undefined, undefined, 3),
+    TC.Integer(undefined, undefined, undefined, undefined, undefined, 3),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "integerMultipleOf3", void 0);
 function getValidObjectForNumericTests() {
@@ -79,7 +79,7 @@ __decorate([
     __metadata("design:type", String)
 ], ForStringTests.prototype, "stringMin5Max10", void 0);
 __decorate([
-    TC.String(true, undefined, undefined, ["banana", "apple"]),
+    TC.StringPattern(["banana", "apple"]),
     __metadata("design:type", String)
 ], ForStringTests.prototype, "bananaOrApple", void 0);
 __decorate([
@@ -163,7 +163,7 @@ describe("Fields:", function () {
                 let obj = getValidObjectForNumericTests();
                 delete obj.positiveFloatMax10;
                 TC.parse(ForNumericTests, obj);
-            }, /required/i);
+            }, /Value is undefined and not optional/i);
         });
         it("should parse correctly nested types with field definitions", function () {
             let obj = TC.parse(TypeWithNestedField, { nt: { x: "0.5" }, name: "test" });
@@ -180,7 +180,7 @@ describe("Fields:", function () {
         it("should reject an empty object", function () {
             Assert.throws(() => {
                 TC.parse(ForNumericTests, {});
-            }, /required/i);
+            }, /Value is undefined and not optional/i);
         });
         it("should parse a float from a string", function () {
             let obj = getValidObjectForNumericTests();
@@ -261,7 +261,7 @@ describe("Fields:", function () {
         it("should reject an empty object", function () {
             Assert.throws(() => {
                 TC.parse(ForStringTests, {});
-            }, /required/i);
+            }, /Value is undefined and not optional/i);
         });
         it("should handle valid object correctly", function () {
             let obj = getValidObjectForStringTests();
@@ -337,7 +337,7 @@ describe("Fields:", function () {
         it("should reject an empty object", function () {
             Assert.throws(() => {
                 TC.parse(ForBooleanTests, {});
-            }, /required/i);
+            }, /Value is undefined and not optional/i);
         });
         it("should handle valid objects correctly", function () {
             let obj = getValidObjectForBooleanTests();
@@ -386,7 +386,7 @@ describe("Fields:", function () {
         it("should reject an empty object", function () {
             Assert.throws(() => {
                 TC.parse(ForDateTests, {});
-            }, /required/i);
+            }, /Value is undefined and not optional/i);
         });
         it("should handle valid objects correctly", function () {
             let obj = getValidObjectForDateTests();
@@ -430,6 +430,48 @@ describe("Fields:", function () {
                 objB = TC.parse(ForDateTests, objB);
             }, /Failed to map string to date/i);
         });
+    });
+});
+describe("Direct Parse Functions:", function () {
+    describe("Floats:", function () {
+        it("should parse float", function () {
+            Assert.throws(() => {
+                TC.parseFloat("not a number");
+            }, /Failed to map string to number/i);
+            Assert.throws(() => {
+                TC.parseFloat(undefined);
+            }, /Value is undefined and not optional/i);
+            Assert.equal(undefined, TC.parseFloat(undefined, false));
+            Assert.equal(0.5, TC.parseFloat("0.5"));
+        });
+        it("should parse positive float", function () {
+            Assert.throws(() => {
+                TC.parsePositiveFloat("-0.5");
+            }, /value must be equal or greater than 0/i);
+            Assert.equal(0.5, TC.parsePositiveFloat("0.5"));
+        });
+        it("should parse negative float", function () {
+            Assert.throws(() => {
+                TC.parseNegativeFloat("0.5");
+            }, /value must be equal or less than 0/i);
+            Assert.equal(-0.5, TC.parseNegativeFloat("-0.5"));
+        });
+        it("should parse positive/negative float not zero", function () {
+            Assert.throws(() => {
+                TC.parsePositiveFloatNotZero("0");
+            }, /value must be greater than 0/i);
+            Assert.throws(() => {
+                TC.parseNegativeFloatNotZero("0");
+            }, /value must be less than 0/i);
+        });
+    });
+    describe("Integers:", function () {
+    });
+    describe("Booleans:", function () {
+    });
+    describe("Strings:", function () {
+    });
+    describe("Dates:", function () {
     });
 });
 //# sourceMappingURL=test.js.map

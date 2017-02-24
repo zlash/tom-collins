@@ -6,5 +6,15 @@ export declare function NegativeFloatNotZero(required?: boolean, min?: number, e
 export declare function PositiveFloatNotZero(required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean): any;
 export declare function NegativeFloat(required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean): any;
 export declare function PositiveFloat(required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean): any;
-export declare function Integer(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number): (target: any, propertyKey: string | symbol) => void;
-export declare function Float(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number): (target: any, propertyKey: string | symbol) => void;
+export declare function Integer(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number): any;
+export declare function Float(required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number): any;
+export declare function parseNegativeIntegerNotZero(value: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean): any;
+export declare function parsePositiveIntegerNotZero(value: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean): any;
+export declare function parseNegativeInteger(value: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean): any;
+export declare function parsePositiveInteger(value: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean): any;
+export declare function parseNegativeFloatNotZero(value: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean): any;
+export declare function parsePositiveFloatNotZero(value: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean): any;
+export declare function parseNegativeFloat(value: any, required?: boolean, min?: number, exclusiveMin?: boolean, multipleOf?: number, max?: number, exclusiveMax?: boolean): any;
+export declare function parsePositiveFloat(value: any, required?: boolean, max?: number, exclusiveMax?: boolean, multipleOf?: number, min?: number, exclusiveMin?: boolean): any;
+export declare function parseInteger(value: any, required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number): any;
+export declare function parseFloat(value: any, required?: boolean, min?: number, max?: number, exclusiveMin?: boolean, exclusiveMax?: boolean, multipleOf?: number): any;

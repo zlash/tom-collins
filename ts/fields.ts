@@ -109,16 +109,21 @@ function checkPODtype(obj: any, podType: any) {
     return false;
 }
 
-export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints & { optional?: boolean; }, maps?: Maps.Map[]): T {
+export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints & { optional?: boolean; }, maps?: Maps.Map | Maps.Map[]): T {
 
     if (value == undefined) {
-        if (constraints != undefined && constraints.optional !== true) {
-            throw new Error("Required value.");
+        if (constraints == undefined || (constraints != undefined && constraints.optional !== true)) {
+            throw new Error("Value is undefined and not optional.");
         }
         return value;
     }
 
     if (maps != undefined) {
+
+        if (!(maps instanceof Array)) {
+            maps = [maps];
+        }
+
         map_loop: for (let map of maps) {
             if (checkPODtype(value, map.type) || value instanceof map.type) {
                 value = map.map(value);

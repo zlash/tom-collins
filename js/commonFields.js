@@ -39,6 +39,10 @@ function Email(required) {
     return String(required, 1, undefined, Patterns.PredefinedPatterns.email);
 }
 exports.Email = Email;
+function StringPattern(pattern, required, minLength, maxLength) {
+    return String(required, minLength, maxLength, pattern);
+}
+exports.StringPattern = StringPattern;
 function String(required, minLength, maxLength, pattern) {
     return TC.Field({
         required: required,

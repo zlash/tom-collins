@@ -24,8 +24,17 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 const TC = require("./tom-collins");
 const Maps = require("./maps");
+const Fields = require("./fields");
 function NegativeIntegerNotZero(required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
     return NegativeNumberNotZero(Integer, required, min, exclusiveMin, multipleOf, max, exclusiveMax);
 }
@@ -59,17 +68,76 @@ function PositiveFloat(required, max, exclusiveMax, multipleOf, min, exclusiveMi
 }
 exports.PositiveFloat = PositiveFloat;
 function Integer(required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
+    return IntegerBase(TC.Field, required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+}
+exports.Integer = Integer;
+function Float(required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
+    return FloatBase(TC.Field, required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+}
+exports.Float = Float;
+// Direct parse functions
+function parseNegativeIntegerNotZero(value, required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
+    return NegativeNumberNotZero(integerParser, required, min, exclusiveMin, multipleOf, max, exclusiveMax)(value);
+}
+exports.parseNegativeIntegerNotZero = parseNegativeIntegerNotZero;
+function parsePositiveIntegerNotZero(value, required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
+    return PositiveNumberNotZero(integerParser, required, max, exclusiveMax, multipleOf, min, exclusiveMin)(value);
+}
+exports.parsePositiveIntegerNotZero = parsePositiveIntegerNotZero;
+function parseNegativeInteger(value, required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
+    return NegativeNumber(integerParser, required, min, exclusiveMin, multipleOf, max, exclusiveMax)(value);
+}
+exports.parseNegativeInteger = parseNegativeInteger;
+function parsePositiveInteger(value, required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
+    return PositiveNumber(integerParser, required, max, exclusiveMax, multipleOf, min, exclusiveMin)(value);
+}
+exports.parsePositiveInteger = parsePositiveInteger;
+function parseNegativeFloatNotZero(value, required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
+    return NegativeNumberNotZero(floatParser, required, min, exclusiveMin, multipleOf, max, exclusiveMax)(value);
+}
+exports.parseNegativeFloatNotZero = parseNegativeFloatNotZero;
+function parsePositiveFloatNotZero(value, required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
+    return PositiveNumberNotZero(floatParser, required, max, exclusiveMax, multipleOf, min, exclusiveMin)(value);
+}
+exports.parsePositiveFloatNotZero = parsePositiveFloatNotZero;
+function parseNegativeFloat(value, required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
+    return NegativeNumber(floatParser, required, min, exclusiveMin, multipleOf, max, exclusiveMax)(value);
+}
+exports.parseNegativeFloat = parseNegativeFloat;
+function parsePositiveFloat(value, required, max, exclusiveMax, multipleOf, min, exclusiveMin) {
+    return PositiveNumber(floatParser, required, max, exclusiveMax, multipleOf, min, exclusiveMin)(value);
+}
+exports.parsePositiveFloat = parsePositiveFloat;
+function parseInteger(value, required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
+    return integerParser(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+}
+exports.parseInteger = parseInteger;
+function integerParser(required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
+    return IntegerBase(individualNumericParser, required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+}
+function parseFloat(value, required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
+    return floatParser(required, min, max, exclusiveMin, exclusiveMax, multipleOf)(value);
+}
+exports.parseFloat = parseFloat;
+function floatParser(required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
+    return FloatBase(individualNumericParser, required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+}
+function individualNumericParser(options) {
+    return (value) => {
+        return Fields.parseValue(Number, value, __assign({}, options.typeConstraints, { optional: (options.required === false) }), options.maps);
+    };
+}
+function IntegerBase(target, required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
     if (multipleOf == undefined) {
         multipleOf = 1.0;
     }
     if (Math.floor(multipleOf) !== multipleOf) {
         throw new Error("MultipleOf for integer values must be an integer.");
     }
-    return Float(required, min, max, exclusiveMin, exclusiveMax, multipleOf);
+    return FloatBase(target, required, min, max, exclusiveMin, exclusiveMax, multipleOf);
 }
-exports.Integer = Integer;
-function Float(required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
-    return TC.Field({
+function FloatBase(target, required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
+    return target({
         required: required,
         maps: Maps.PredefinedMaps.stringToNumber,
         typeConstraints: {
@@ -81,7 +149,6 @@ function Float(required, min, max, exclusiveMin, exclusiveMax, multipleOf) {
         }
     });
 }
-exports.Float = Float;
 function NegativeNumberNotZero(fielder, required, min, exclusiveMin, multipleOf, max, exclusiveMax) {
     max = max == undefined ? 0 : Math.min(0, max);
     exclusiveMax = exclusiveMax || max === 0;

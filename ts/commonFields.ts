@@ -41,6 +41,10 @@ export function Email(required?: boolean) {
     return String(required, 1, undefined, Patterns.PredefinedPatterns.email);
 }
 
+export function StringPattern(pattern: Fields.StringConstraintPattern, required?: boolean, minLength?: number, maxLength?: number) {
+    return String(required, minLength, maxLength, pattern);
+}
+
 export function String(required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
     return TC.Field({
         required: required,

@@ -81,15 +81,6 @@ function fillImplicitFieldSettings<T>(type: GenericConstructor<T>) {
         for (let field of fields) {
             let fieldOptions: FieldOptions = Reflect.getMetadata("field:options", type.prototype, field) || new FieldOptions();
             fieldOptions.required = fieldOptions.required == undefined ? allRequired : fieldOptions.required;
-
-            if (fieldOptions.maps == undefined) {
-                fieldOptions.maps = [];
-            }
-
-            if (!(fieldOptions.maps instanceof Array)) {
-                fieldOptions.maps = [fieldOptions.maps];
-            }
-
             Reflect.defineMetadata("field:options", fieldOptions, type.prototype, field);
         }
 
@@ -127,7 +118,7 @@ export function parse<T>(type: GenericConstructor<T>, obj: any): T {
                     }
                 }
             } else {
-                ret[field] = Fields.parseValue(fieldType, obj[field], { ...fieldOptions.typeConstraints, optional: fieldOptions.required !== true }, fieldOptions.maps as Maps.Map[]);
+                ret[field] = Fields.parseValue(fieldType, obj[field], { ...fieldOptions.typeConstraints, optional: (fieldOptions.required === false) }, fieldOptions.maps);
             }
         } catch (err) {
             throw new Error(`Parse failed for field ${field}: ` + err.message);
