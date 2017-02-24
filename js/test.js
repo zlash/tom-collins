@@ -581,12 +581,30 @@ describe("Direct Parse Functions:", function () {
             Assert.throws(() => {
                 TC.parseDate(1);
             }, /Invalid type/i);
+            Assert.equal(undefined, TC.parseDate(undefined, false));
             let dateA = TC.parseDate("2017-02-23T19:01:50Z");
             let dateB = TC.parseDate("20170223T190150Z");
             let dateC = TC.parseDate("2017-02-23T16:01:50-03:00");
             Assert(Moment(dateA).isSame(dateB));
             Assert(Moment(dateA).isSame(dateC));
             Assert(Moment(dateB).isSame(dateC));
+        });
+        it("should parse custom dates", function () {
+            let customDateFormat = "MM YYYY DD";
+            Assert.throws(() => {
+                TC.parseCustomDate(undefined, customDateFormat);
+            }, /Value is undefined and not optional/i);
+            Assert.throws(() => {
+                TC.parseCustomDate("1/1/2012", customDateFormat);
+            }, /t45t/i);
+            Assert.throws(() => {
+                TC.parseCustomDate("13 2012 1", customDateFormat);
+            }, /t45t/i);
+            Assert.throws(() => {
+                TC.parseCustomDate(1, customDateFormat);
+            }, /twft4/i);
+            Assert.equal(undefined, TC.parseCustomDate(undefined, customDateFormat, false));
+            Assert(Moment("2017-02-23").isSame(TC.parseCustomDate("2 2017 23", customDateFormat)));
         });
     });
 });
