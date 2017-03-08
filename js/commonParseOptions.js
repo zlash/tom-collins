@@ -147,7 +147,7 @@ function array(underlyingPO, constraints) {
     constraints = constraints || {};
     constraints.underlyingTypeParseOptions = underlyingPO;
     return {
-        targetType: Boolean,
+        targetType: Array,
         constraints: constraints
     };
 }

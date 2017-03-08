@@ -102,7 +102,12 @@ function parseValue(options, value) {
             }
             if (constraintsArray.underlyingTypeParseOptions != undefined) {
                 for (let i = 0; i < valueArray.length; i++) {
-                    valueArray[i] = parseValue(constraintsArray.underlyingTypeParseOptions, valueArray[i]);
+                    try {
+                        valueArray[i] = parseValue(constraintsArray.underlyingTypeParseOptions, valueArray[i]);
+                    }
+                    catch (err) {
+                        throw new Error(`Element at [${i}]: ${err.message}`);
+                    }
                 }
             }
         }

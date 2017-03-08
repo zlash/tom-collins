@@ -107,6 +107,6 @@ export declare function integer(floatCPOGenerator: (constraints: Parse.NumberCon
  * Arrays
  **********************************/
 export declare function array(underlyingPO: Parse.ParseOptionsI, constraints?: Parse.ArrayConstraints): {
-    targetType: BooleanConstructor;
+    targetType: ArrayConstructor;
     constraints: Parse.ArrayConstraints;
 };

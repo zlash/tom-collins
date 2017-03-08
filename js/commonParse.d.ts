@@ -57,4 +57,4 @@ export declare function parseNegativeNotZeroInteger(value: any, constraints?: Pa
 /**********************************
  * Arrays
  **********************************/
-export declare function parseArray(value: any, underlyingPO: Parse.ParseOptionsI, constraints?: Parse.ArrayConstraints): Boolean;
+export declare function parseArray(value: any, underlyingPO: Parse.ParseOptionsI, constraints?: Parse.ArrayConstraints): any[];

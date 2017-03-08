@@ -707,7 +707,17 @@ describe("Direct Parse Functions:", function () {
         });
     });
 
-    
+    describe("Arrays:", function () {
+        it("should parse arrays", function () {
+            Assert.throws(() => {
+                TC.parseArray(undefined, TC.string());
+            }, /Value is undefined and not optional/i);
+            Assert.throws(() => {
+                TC.parseArray(["a", "b", ""], TC.stringNotEmpty());
+            }, /String length constraint violation/i);
+            TC.parseArray(["a", "b", "c"], TC.string());
+        });
+
+    });
 
 });
-

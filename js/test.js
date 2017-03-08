@@ -607,5 +607,16 @@ describe("Direct Parse Functions:", function () {
             Assert(Moment("2017-02-23").isSame(TC.parseCustomDate("02 2017 23", customDateFormat)));
         });
     });
+    describe("Arrays:", function () {
+        it("should parse arrays", function () {
+            Assert.throws(() => {
+                TC.parseArray(undefined, TC.string());
+            }, /Value is undefined and not optional/i);
+            Assert.throws(() => {
+                TC.parseArray(["a", "b", ""], TC.stringNotEmpty());
+            }, /String length constraint violation/i);
+            TC.parseArray(["a", "b", "c"], TC.string());
+        });
+    });
 });
 //# sourceMappingURL=test.js.map

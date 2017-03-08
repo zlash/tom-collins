@@ -154,7 +154,7 @@ export function array(underlyingPO: Parse.ParseOptionsI, constraints?: Parse.Arr
     constraints = constraints || {};
     constraints.underlyingTypeParseOptions = underlyingPO;
     return {
-        targetType: Boolean,
+        targetType: Array,
         constraints: constraints
     };
 }
