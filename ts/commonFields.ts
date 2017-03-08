@@ -24,119 +24,103 @@ SOFTWARE.
 
 *********************************************************************************/
 
-import * as TC from "./tom-collins";
-import * as Maps from "./maps";
-import * as Fields from "./fields";
-import * as Patterns from "./patterns";
+import * as F from "./field";
+import * as Parse from "./parse";
+import * as CPO from "./commonParseOptions";
 
-export function parseStringNotEmpty(value: any, required?: boolean, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
-    return StringBase(individualParser(String), required, 1, maxLength, pattern)(value);
+/**********************************
+ * Strings
+ **********************************/
+
+export function StringField(constraints?: Parse.StringConstraints) {
+    return F.Field(CPO.string(constraints));
 }
 
-export function StringNotEmpty(required?: boolean, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
-    return StringField(required, 1, maxLength, pattern);
+export function StringNotEmpty(constraints?: Parse.StringConstraints) {
+    return F.Field(CPO.stringNotEmpty(constraints));
 }
 
-export function parseStringNotWhitespace(value: any, required?: boolean, maxLength?: number) {
-    return StringBase(individualParser(String), required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace)(value);
+export function StringPattern(pattern: Parse.StringConstraintPattern, constraints?: Parse.StringConstraints) {
+    return F.Field(CPO.stringPattern(pattern, constraints));
 }
 
-export function StringNotWhitespace(required?: boolean, maxLength?: number) {
-    return StringField(required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace);
+export function Email(constraints?: Parse.StringConstraints) {
+    return F.Field(CPO.stringEmail(constraints));
 }
 
-export function parseEmail(value: any, required?: boolean) {
-    return StringBase(individualParser(String), required, 1, undefined, Patterns.PredefinedPatterns.email)(value);
+export function NotWhitespace(constraints?: Parse.StringConstraints) {
+    return F.Field(CPO.stringNotWhitespace(constraints));
 }
 
-export function Email(required?: boolean) {
-    return StringField(required, 1, undefined, Patterns.PredefinedPatterns.email);
+/**********************************
+ * Booleans
+ **********************************/
+
+export function BooleanField(constraints?: Parse.StringConstraints) {
+    return F.Field(CPO.boolean(constraints));
 }
 
-export function parseStringPattern(value: any, pattern: Fields.StringConstraintPattern, required?: boolean, minLength?: number, maxLength?: number) {
-    return StringBase(individualParser(String), required, minLength, maxLength, pattern)(value);
+/**********************************
+ * Dates
+ **********************************/
+
+export function DateField(constraints?: Parse.StringConstraints) {
+    return F.Field(CPO.date(constraints));
 }
 
-export function StringPattern(pattern: Fields.StringConstraintPattern, required?: boolean, minLength?: number, maxLength?: number) {
-    return StringField(required, minLength, maxLength, pattern);
+export function CustomDate(format: string, nonStrict = false, constraints?: Parse.StringConstraints) {
+    return F.Field(CPO.customDate(format, nonStrict, constraints));
 }
 
-export function parseString(value: any, required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
-    return StringBase(individualParser(String), required, minLength, maxLength, pattern)(value);
+/**********************************
+ * Numbers
+ **********************************/
+
+export function Float(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.float(constraints));
 }
 
-export function StringField(required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
-    return StringBase(TC.Field, required, minLength, maxLength, pattern);
+export function PositiveFloat(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.positiveFloat(constraints));
 }
 
-export function StringBase(t: any, required?: boolean, minLength?: number, maxLength?: number, pattern?: Fields.StringConstraintPattern) {
-    return t({
-        required: required,
-        maps: Maps.PredefinedMaps.anyToString,
-        typeConstraints: {
-            minLength: minLength,
-            maxLength: maxLength,
-            pattern: pattern
-        }
-    });
+export function PositiveNotZeroFloat(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.positiveNotZeroFloat(constraints));
 }
 
-export function parseBoolean(value: any, required?: boolean) {
-    return BooleanBase(individualParser(Boolean), required)(value);
+export function NegativeFloat(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.negativeFloat(constraints));
 }
 
-export function BooleanField(required?: boolean) {
-    return BooleanBase(TC.Field, required);
+export function NegativeNotZeroFloat(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.negativeNotZeroFloat(constraints));
 }
 
-export function BooleanBase(t: any, required?: boolean) {
-    return t({
-        required: required,
-        maps: [
-            Maps.PredefinedMaps.stringToBoolean,
-            Maps.PredefinedMaps.numberToBoolean
-        ]
-    });
+export function Integer(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.integer(CPO.float, constraints));
 }
 
-export function parseDate(value: any, required?: boolean) {
-    return DateBase(individualParser(Date), required)(value);
+export function PositiveInteger(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.integer(CPO.positiveFloat, constraints));
 }
 
-export function DateField(required?: boolean) {
-    return DateBase(TC.Field, required);
+export function PositiveNotZeroInteger(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.integer(CPO.positiveNotZeroFloat, constraints));
 }
 
-export function DateBase(t: any, required?: boolean) {
-    return t({
-        required: required,
-        maps: [
-            Maps.PredefinedMaps.stringToDate
-        ]
-    });
+export function NegativeInteger(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.integer(CPO.negativeFloat, constraints));
 }
 
-export function parseCustomDate(value: any, format: string, required = true, nonStrict = false) {
-    return CustomDateBase(individualParser(Date), format, required, nonStrict)(value);
+export function NegativeNotZeroInteger(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.integer(CPO.negativeNotZeroFloat, constraints));
 }
 
-export function CustomDate(format: string, required = true, nonStrict = false) {
-    return CustomDateBase(TC.Field, format, required, nonStrict);
+/**********************************
+ * Arrays
+ **********************************/
+
+export function ArrayField(underlyingPO: Parse.ParseOptionsI, constraints?: Parse.ArrayConstraints) {
+    return F.Field(CPO.array(underlyingPO, constraints));
 }
 
-export function CustomDateBase(t: any, format: string, required = true, nonStrict = false) {
-    return t({
-        required: required,
-        maps: [
-            Maps.PredefinedMaps.stringToCustomDate(format, nonStrict)
-        ]
-    });
-}
-
-function individualParser<T>(targetType: TC.GenericConstructor<T>) {
-    return (options: TC.FieldOptions) => {
-        return (value: any) => {
-            return Fields.parseValue(targetType, value, { ...options.typeConstraints, optional: (options.required === false) }, options.maps);
-        };
-    };
-}

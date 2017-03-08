@@ -24,12 +24,31 @@ SOFTWARE.
 
 *********************************************************************************/
 
-import * as TC from "./tom-collins";
+import * as Field from "./field";
 import * as Maps from "./maps";
 import * as Patterns from "./patterns";
 
 export type StringConstraintPattern = Patterns.Pattern | string[];
-export type Constraints = StringConstraints | NumberConstraints;
+export type Constraints = StringConstraints | NumberConstraints | ArrayConstraints;
+
+export class ArrayConstraints {
+    /**
+     * Minimum acceptable length for array
+     */
+    minLength?: number;
+    /**
+     * Maximum acceptable length for array
+     */
+    maxLength?: number;
+    /**
+     * Underlying array ParseOptions
+     */
+    underlyingTypeParseOptions?: ParseOptionsI;
+    /**
+     * Is optional
+     */
+    optional?: boolean;
+}
 
 export class StringConstraints {
     /**
@@ -46,6 +65,10 @@ export class StringConstraints {
      * Also, it can be one of the predefined pattens in the 'Pattern' enum.
      */
     pattern?: StringConstraintPattern;
+    /**
+     * Is optional
+     */
+    optional?: boolean;
 }
 
 export class NumberConstraints {
@@ -70,6 +93,23 @@ export class NumberConstraints {
     exclusiveMinimum?: boolean;
     maximum?: number;
     exclusiveMaximum?: boolean;
+    /**
+    * Is optional
+    */
+    optional?: boolean;
+}
+
+
+export interface ParseOptionsI {
+    constraints?: Constraints;
+    maps?: Maps.Map | Maps.Map[];
+    targetType: any;
+}
+
+export class ParseOptions<T> implements ParseOptionsI {
+    targetType: Field.GenericConstructor<T>;
+    constraints?: Constraints;
+    maps?: Maps.Map | Maps.Map[];
 }
 
 export function stringConstraintPatternToPattern(pattern: StringConstraintPattern): Patterns.Pattern {
@@ -109,22 +149,22 @@ function checkPODtype(obj: any, podType: any) {
     return false;
 }
 
-export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints & { optional?: boolean; }, maps?: Maps.Map | Maps.Map[]): T {
+export function parseValue<T>(options: ParseOptions<T>, value: any): T {
 
     if (value == undefined) {
-        if (constraints == undefined || (constraints != undefined && constraints.optional !== true)) {
+        if (options.constraints == undefined || (options.constraints != undefined && options.constraints.optional !== true)) {
             throw new Error("Value is undefined and not optional.");
         }
         return value;
     }
 
-    if (maps != undefined) {
+    if (options.maps != undefined) {
 
-        if (!(maps instanceof Array)) {
-            maps = [maps];
+        if (!(options.maps instanceof Array)) {
+            options.maps = [options.maps];
         }
 
-        map_loop: for (let map of maps) {
+        map_loop: for (let map of options.maps) {
             if (map.type === "*" || checkPODtype(value, map.type) || value instanceof map.type) {
                 value = map.map(value);
                 break map_loop;
@@ -132,14 +172,33 @@ export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, 
         }
     }
 
-    if (!checkPODtype(value, targetType) && !(value instanceof targetType)) {
-        throw new Error(`Invalid type, expected '${targetType.name}'`);
+    if (!checkPODtype(value, options.targetType) && !(value instanceof options.targetType)) {
+        throw new Error(`Invalid type, expected '${options.targetType.name}'`);
     }
 
-    if (constraints != undefined) {
-        if (typeof (value) === "string" || value instanceof String) {
+    if (options.constraints != undefined) {
+        if (value instanceof Array) {
 
-            let constraintsStr = constraints as StringConstraints;
+            let constraintsArray = options.constraints as ArrayConstraints;
+            let valueArray: Array<any> = value;
+
+            if (constraintsArray.minLength != undefined && valueArray.length < constraintsArray.minLength) {
+                throw new Error(`Array length constraint violation, it must be at least ${constraintsArray.minLength} characters long.`);
+            }
+
+            if (constraintsArray.maxLength != undefined && valueArray.length > constraintsArray.maxLength) {
+                throw new Error(`Array length constraint violation, it must be ${constraintsArray.maxLength} or less characters long.`);
+            }
+
+            if (constraintsArray.underlyingTypeParseOptions != undefined) {
+                for (let i = 0; i < valueArray.length; i++) {
+                    valueArray[i] = parseValue(constraintsArray.underlyingTypeParseOptions, valueArray[i]);
+                }
+            }
+
+        } else if (typeof (value) === "string" || value instanceof String) {
+
+            let constraintsStr = options.constraints as StringConstraints;
             if (constraintsStr.minLength != undefined && (value as string).length < constraintsStr.minLength) {
                 throw new Error(`String length constraint violation, it must be at least ${constraintsStr.minLength} characters long.`);
             }
@@ -172,7 +231,7 @@ export function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, 
 
         } else if (typeof (value) === "number" || value instanceof Number) {
 
-            let constraintsN = constraints as NumberConstraints;
+            let constraintsN = options.constraints as NumberConstraints;
             if (constraintsN.multipleOf != undefined) {
                 if (constraintsN.multipleOf <= 0) {
                     throw new Error("multipleOf must be greater than 0.");

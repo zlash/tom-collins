@@ -23,11 +23,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *********************************************************************************/
-import * as TC from "./tom-collins";
+import * as Field from "./field";
 import * as Maps from "./maps";
 import * as Patterns from "./patterns";
 export declare type StringConstraintPattern = Patterns.Pattern | string[];
-export declare type Constraints = StringConstraints | NumberConstraints;
+export declare type Constraints = StringConstraints | NumberConstraints | ArrayConstraints;
+export declare class ArrayConstraints {
+    /**
+     * Minimum acceptable length for array
+     */
+    minLength?: number;
+    /**
+     * Maximum acceptable length for array
+     */
+    maxLength?: number;
+    /**
+     * Underlying array ParseOptions
+     */
+    underlyingTypeParseOptions?: ParseOptionsI;
+    /**
+     * Is optional
+     */
+    optional?: boolean;
+}
 export declare class StringConstraints {
     /**
      * Minimum acceptable length for string
@@ -43,6 +61,10 @@ export declare class StringConstraints {
      * Also, it can be one of the predefined pattens in the 'Pattern' enum.
      */
     pattern?: StringConstraintPattern;
+    /**
+     * Is optional
+     */
+    optional?: boolean;
 }
 export declare class NumberConstraints {
     /**
@@ -65,8 +87,20 @@ export declare class NumberConstraints {
     exclusiveMinimum?: boolean;
     maximum?: number;
     exclusiveMaximum?: boolean;
+    /**
+    * Is optional
+    */
+    optional?: boolean;
+}
+export interface ParseOptionsI {
+    constraints?: Constraints;
+    maps?: Maps.Map | Maps.Map[];
+    targetType: any;
+}
+export declare class ParseOptions<T> implements ParseOptionsI {
+    targetType: Field.GenericConstructor<T>;
+    constraints?: Constraints;
+    maps?: Maps.Map | Maps.Map[];
 }
 export declare function stringConstraintPatternToPattern(pattern: StringConstraintPattern): Patterns.Pattern;
-export declare function parseValue<T>(targetType: TC.GenericConstructor<T>, value: any, constraints?: Constraints & {
-    optional?: boolean;
-}, maps?: Maps.Map | Maps.Map[]): T;
+export declare function parseValue<T>(options: ParseOptions<T>, value: any): T;

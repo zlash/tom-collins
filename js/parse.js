@@ -24,12 +24,18 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
+class ArrayConstraints {
+}
+exports.ArrayConstraints = ArrayConstraints;
 class StringConstraints {
 }
 exports.StringConstraints = StringConstraints;
 class NumberConstraints {
 }
 exports.NumberConstraints = NumberConstraints;
+class ParseOptions {
+}
+exports.ParseOptions = ParseOptions;
 function stringConstraintPatternToPattern(pattern) {
     if (pattern == undefined) {
         return undefined;
@@ -63,30 +69,45 @@ function checkPODtype(obj, podType) {
     }
     return false;
 }
-function parseValue(targetType, value, constraints, maps) {
+function parseValue(options, value) {
     if (value == undefined) {
-        if (constraints == undefined || (constraints != undefined && constraints.optional !== true)) {
+        if (options.constraints == undefined || (options.constraints != undefined && options.constraints.optional !== true)) {
             throw new Error("Value is undefined and not optional.");
         }
         return value;
     }
-    if (maps != undefined) {
-        if (!(maps instanceof Array)) {
-            maps = [maps];
+    if (options.maps != undefined) {
+        if (!(options.maps instanceof Array)) {
+            options.maps = [options.maps];
         }
-        map_loop: for (let map of maps) {
+        map_loop: for (let map of options.maps) {
             if (map.type === "*" || checkPODtype(value, map.type) || value instanceof map.type) {
                 value = map.map(value);
                 break map_loop;
             }
         }
     }
-    if (!checkPODtype(value, targetType) && !(value instanceof targetType)) {
-        throw new Error(`Invalid type, expected '${targetType.name}'`);
+    if (!checkPODtype(value, options.targetType) && !(value instanceof options.targetType)) {
+        throw new Error(`Invalid type, expected '${options.targetType.name}'`);
     }
-    if (constraints != undefined) {
-        if (typeof (value) === "string" || value instanceof String) {
-            let constraintsStr = constraints;
+    if (options.constraints != undefined) {
+        if (value instanceof Array) {
+            let constraintsArray = options.constraints;
+            let valueArray = value;
+            if (constraintsArray.minLength != undefined && valueArray.length < constraintsArray.minLength) {
+                throw new Error(`Array length constraint violation, it must be at least ${constraintsArray.minLength} characters long.`);
+            }
+            if (constraintsArray.maxLength != undefined && valueArray.length > constraintsArray.maxLength) {
+                throw new Error(`Array length constraint violation, it must be ${constraintsArray.maxLength} or less characters long.`);
+            }
+            if (constraintsArray.underlyingTypeParseOptions != undefined) {
+                for (let i = 0; i < valueArray.length; i++) {
+                    valueArray[i] = parseValue(constraintsArray.underlyingTypeParseOptions, valueArray[i]);
+                }
+            }
+        }
+        else if (typeof (value) === "string" || value instanceof String) {
+            let constraintsStr = options.constraints;
             if (constraintsStr.minLength != undefined && value.length < constraintsStr.minLength) {
                 throw new Error(`String length constraint violation, it must be at least ${constraintsStr.minLength} characters long.`);
             }
@@ -113,7 +134,7 @@ function parseValue(targetType, value, constraints, maps) {
             }
         }
         else if (typeof (value) === "number" || value instanceof Number) {
-            let constraintsN = constraints;
+            let constraintsN = options.constraints;
             if (constraintsN.multipleOf != undefined) {
                 if (constraintsN.multipleOf <= 0) {
                     throw new Error("multipleOf must be greater than 0.");
@@ -137,4 +158,4 @@ function parseValue(targetType, value, constraints, maps) {
     return value;
 }
 exports.parseValue = parseValue;
-//# sourceMappingURL=fields.js.map
+//# sourceMappingURL=parse.js.map

@@ -24,127 +24,97 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
-const TC = require("./tom-collins");
-const Maps = require("./maps");
-const Fields = require("./fields");
-const Patterns = require("./patterns");
-function parseStringNotEmpty(value, required, maxLength, pattern) {
-    return StringBase(individualParser(String), required, 1, maxLength, pattern)(value);
-}
-exports.parseStringNotEmpty = parseStringNotEmpty;
-function StringNotEmpty(required, maxLength, pattern) {
-    return StringField(required, 1, maxLength, pattern);
-}
-exports.StringNotEmpty = StringNotEmpty;
-function parseStringNotWhitespace(value, required, maxLength) {
-    return StringBase(individualParser(String), required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace)(value);
-}
-exports.parseStringNotWhitespace = parseStringNotWhitespace;
-function StringNotWhitespace(required, maxLength) {
-    return StringField(required, 1, maxLength, Patterns.PredefinedPatterns.notWhitespace);
-}
-exports.StringNotWhitespace = StringNotWhitespace;
-function parseEmail(value, required) {
-    return StringBase(individualParser(String), required, 1, undefined, Patterns.PredefinedPatterns.email)(value);
-}
-exports.parseEmail = parseEmail;
-function Email(required) {
-    return StringField(required, 1, undefined, Patterns.PredefinedPatterns.email);
-}
-exports.Email = Email;
-function parseStringPattern(value, pattern, required, minLength, maxLength) {
-    return StringBase(individualParser(String), required, minLength, maxLength, pattern)(value);
-}
-exports.parseStringPattern = parseStringPattern;
-function StringPattern(pattern, required, minLength, maxLength) {
-    return StringField(required, minLength, maxLength, pattern);
-}
-exports.StringPattern = StringPattern;
-function parseString(value, required, minLength, maxLength, pattern) {
-    return StringBase(individualParser(String), required, minLength, maxLength, pattern)(value);
-}
-exports.parseString = parseString;
-function StringField(required, minLength, maxLength, pattern) {
-    return StringBase(TC.Field, required, minLength, maxLength, pattern);
+const F = require("./field");
+const CPO = require("./commonParseOptions");
+/**********************************
+ * Strings
+ **********************************/
+function StringField(constraints) {
+    return F.Field(CPO.string(constraints));
 }
 exports.StringField = StringField;
-function StringBase(t, required, minLength, maxLength, pattern) {
-    return t({
-        required: required,
-        maps: Maps.PredefinedMaps.anyToString,
-        typeConstraints: {
-            minLength: minLength,
-            maxLength: maxLength,
-            pattern: pattern
-        }
-    });
+function StringNotEmpty(constraints) {
+    return F.Field(CPO.stringNotEmpty(constraints));
 }
-exports.StringBase = StringBase;
-function parseBoolean(value, required) {
-    return BooleanBase(individualParser(Boolean), required)(value);
+exports.StringNotEmpty = StringNotEmpty;
+function StringPattern(pattern, constraints) {
+    return F.Field(CPO.stringPattern(pattern, constraints));
 }
-exports.parseBoolean = parseBoolean;
-function BooleanField(required) {
-    return BooleanBase(TC.Field, required);
+exports.StringPattern = StringPattern;
+function Email(constraints) {
+    return F.Field(CPO.stringEmail(constraints));
+}
+exports.Email = Email;
+function NotWhitespace(constraints) {
+    return F.Field(CPO.stringNotWhitespace(constraints));
+}
+exports.NotWhitespace = NotWhitespace;
+/**********************************
+ * Booleans
+ **********************************/
+function BooleanField(constraints) {
+    return F.Field(CPO.boolean(constraints));
 }
 exports.BooleanField = BooleanField;
-function BooleanBase(t, required) {
-    return t({
-        required: required,
-        maps: [
-            Maps.PredefinedMaps.stringToBoolean,
-            Maps.PredefinedMaps.numberToBoolean
-        ]
-    });
-}
-exports.BooleanBase = BooleanBase;
-function parseDate(value, required) {
-    return DateBase(individualParser(Date), required)(value);
-}
-exports.parseDate = parseDate;
-function DateField(required) {
-    return DateBase(TC.Field, required);
+/**********************************
+ * Dates
+ **********************************/
+function DateField(constraints) {
+    return F.Field(CPO.date(constraints));
 }
 exports.DateField = DateField;
-function DateBase(t, required) {
-    return t({
-        required: required,
-        maps: [
-            Maps.PredefinedMaps.stringToDate
-        ]
-    });
-}
-exports.DateBase = DateBase;
-function parseCustomDate(value, format, required = true, nonStrict = false) {
-    return CustomDateBase(individualParser(Date), format, required, nonStrict)(value);
-}
-exports.parseCustomDate = parseCustomDate;
-function CustomDate(format, required = true, nonStrict = false) {
-    return CustomDateBase(TC.Field, format, required, nonStrict);
+function CustomDate(format, nonStrict = false, constraints) {
+    return F.Field(CPO.customDate(format, nonStrict, constraints));
 }
 exports.CustomDate = CustomDate;
-function CustomDateBase(t, format, required = true, nonStrict = false) {
-    return t({
-        required: required,
-        maps: [
-            Maps.PredefinedMaps.stringToCustomDate(format, nonStrict)
-        ]
-    });
+/**********************************
+ * Numbers
+ **********************************/
+function Float(constraints) {
+    return F.Field(CPO.float(constraints));
 }
-exports.CustomDateBase = CustomDateBase;
-function individualParser(targetType) {
-    return (options) => {
-        return (value) => {
-            return Fields.parseValue(targetType, value, __assign({}, options.typeConstraints, { optional: (options.required === false) }), options.maps);
-        };
-    };
+exports.Float = Float;
+function PositiveFloat(constraints) {
+    return F.Field(CPO.positiveFloat(constraints));
 }
+exports.PositiveFloat = PositiveFloat;
+function PositiveNotZeroFloat(constraints) {
+    return F.Field(CPO.positiveNotZeroFloat(constraints));
+}
+exports.PositiveNotZeroFloat = PositiveNotZeroFloat;
+function NegativeFloat(constraints) {
+    return F.Field(CPO.negativeFloat(constraints));
+}
+exports.NegativeFloat = NegativeFloat;
+function NegativeNotZeroFloat(constraints) {
+    return F.Field(CPO.negativeNotZeroFloat(constraints));
+}
+exports.NegativeNotZeroFloat = NegativeNotZeroFloat;
+function Integer(constraints) {
+    return F.Field(CPO.integer(CPO.float, constraints));
+}
+exports.Integer = Integer;
+function PositiveInteger(constraints) {
+    return F.Field(CPO.integer(CPO.positiveFloat, constraints));
+}
+exports.PositiveInteger = PositiveInteger;
+function PositiveNotZeroInteger(constraints) {
+    return F.Field(CPO.integer(CPO.positiveNotZeroFloat, constraints));
+}
+exports.PositiveNotZeroInteger = PositiveNotZeroInteger;
+function NegativeInteger(constraints) {
+    return F.Field(CPO.integer(CPO.negativeFloat, constraints));
+}
+exports.NegativeInteger = NegativeInteger;
+function NegativeNotZeroInteger(constraints) {
+    return F.Field(CPO.integer(CPO.negativeNotZeroFloat, constraints));
+}
+exports.NegativeNotZeroInteger = NegativeNotZeroInteger;
+/**********************************
+ * Arrays
+ **********************************/
+function ArrayField(underlyingPO, constraints) {
+    return F.Field(CPO.array(underlyingPO, constraints));
+}
+exports.ArrayField = ArrayField;
 //# sourceMappingURL=commonFields.js.map

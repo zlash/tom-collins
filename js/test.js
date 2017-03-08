@@ -14,23 +14,23 @@ const Moment = require("moment");
 class ForNumericTests {
 }
 __decorate([
-    TC.Float(false),
+    TC.Float({ optional: true }),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "optionalFloat", void 0);
 __decorate([
-    TC.PositiveFloat(undefined, 10),
+    TC.PositiveFloat({ maximum: 10 }),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "positiveFloatMax10", void 0);
 __decorate([
-    TC.NegativeFloat(undefined, -10, true),
+    TC.NegativeFloat({ minimum: -10, exclusiveMinimum: true }),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "negativeFloatMinExclusiveMinus10", void 0);
 __decorate([
-    TC.PositiveFloatNotZero(),
+    TC.PositiveNotZeroFloat(),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "positiveFloatNotZero", void 0);
 __decorate([
-    TC.NegativeFloatNotZero(),
+    TC.NegativeNotZeroFloat(),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "negativeFloatNotZero", void 0);
 __decorate([
@@ -38,23 +38,23 @@ __decorate([
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "integer", void 0);
 __decorate([
-    TC.PositiveInteger(undefined, 5, true),
+    TC.PositiveInteger({ maximum: 5, exclusiveMaximum: true }),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "positiveIntegerMaxExclusive5", void 0);
 __decorate([
-    TC.NegativeInteger(undefined, -5),
+    TC.NegativeInteger({ minimum: -5 }),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "negativeIntegerMinMinus5", void 0);
 __decorate([
-    TC.PositiveIntegerNotZero(),
+    TC.PositiveNotZeroInteger(),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "positiveIntegerNotZero", void 0);
 __decorate([
-    TC.NegativeIntegerNotZero(),
+    TC.NegativeNotZeroInteger(),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "negativeIntegerNotZero", void 0);
 __decorate([
-    TC.Integer(undefined, undefined, undefined, undefined, undefined, 3),
+    TC.Integer({ multipleOf: 3 }),
     __metadata("design:type", Number)
 ], ForNumericTests.prototype, "integerMultipleOf3", void 0);
 function getValidObjectForNumericTests() {
@@ -75,7 +75,7 @@ function getValidObjectForNumericTests() {
 class ForStringTests {
 }
 __decorate([
-    TC.StringField(true, 5, 10),
+    TC.StringField({ minLength: 5, maxLength: 10 }),
     __metadata("design:type", String)
 ], ForStringTests.prototype, "stringMin5Max10", void 0);
 __decorate([
@@ -91,7 +91,7 @@ __decorate([
     __metadata("design:type", String)
 ], ForStringTests.prototype, "stringNotEmpty", void 0);
 __decorate([
-    TC.StringNotWhitespace(),
+    TC.NotWhitespace(),
     __metadata("design:type", String)
 ], ForStringTests.prototype, "stringNotWhitespace", void 0);
 function getValidObjectForStringTests() {
@@ -144,7 +144,7 @@ __decorate([
     __metadata("design:type", NestedType)
 ], TypeWithNestedField.prototype, "nt", void 0);
 __decorate([
-    TC.Field({ required: false }),
+    TC.Field({ optional: true }),
     __metadata("design:type", NestedType)
 ], TypeWithNestedField.prototype, "optionalNT", void 0);
 __decorate([
@@ -173,7 +173,7 @@ describe("Fields:", function () {
             }, /Failed to map string to number/i);
             Assert.throws(() => {
                 TC.parse(TypeWithNestedField, { name: "test" });
-            }, /Required field nt missing/i);
+            }, /Value is undefined and not optional/i);
         });
     });
     describe("Float fields:", function () {
@@ -441,7 +441,7 @@ describe("Direct Parse Functions:", function () {
             Assert.throws(() => {
                 TC.parseFloat(undefined);
             }, /Value is undefined and not optional/i);
-            Assert.equal(undefined, TC.parseFloat(undefined, false));
+            Assert.equal(undefined, TC.parseFloat(undefined, { optional: true }));
             Assert.equal(0.5, TC.parseFloat("0.5"));
         });
         it("should parse positive float", function () {
@@ -458,10 +458,10 @@ describe("Direct Parse Functions:", function () {
         });
         it("should parse positive/negative float not zero", function () {
             Assert.throws(() => {
-                TC.parsePositiveFloatNotZero("0");
+                TC.parsePositiveNotZeroFloat("0");
             }, /value must be greater than 0/i);
             Assert.throws(() => {
-                TC.parseNegativeFloatNotZero("0");
+                TC.parseNegativeNotZeroFloat("0");
             }, /value must be less than 0/i);
         });
     });
@@ -479,7 +479,7 @@ describe("Direct Parse Functions:", function () {
             Assert.throws(() => {
                 TC.parseInteger("123455.0002");
             }, /value must be a multiple of 1/i);
-            Assert.equal(undefined, TC.parseInteger(undefined, false));
+            Assert.equal(undefined, TC.parseInteger(undefined, { optional: true }));
             Assert.equal(5, TC.parseInteger("5"));
         });
         it("should parse positive integers", function () {
@@ -496,10 +496,10 @@ describe("Direct Parse Functions:", function () {
         });
         it("should parse positive/negative integers not zero", function () {
             Assert.throws(() => {
-                TC.parsePositiveIntegerNotZero("0");
+                TC.parsePositiveNotZeroInteger("0");
             }, /value must be greater than 0/i);
             Assert.throws(() => {
-                TC.parseNegativeIntegerNotZero("0");
+                TC.parseNegativeNotZeroInteger("0");
             }, /value must be less than 0/i);
         });
     });
@@ -517,7 +517,7 @@ describe("Direct Parse Functions:", function () {
             Assert.throws(() => {
                 TC.parseBoolean(5);
             }, /Invalid number to boolean cast/i);
-            Assert.equal(undefined, TC.parseBoolean(undefined, false));
+            Assert.equal(undefined, TC.parseBoolean(undefined, { optional: true }));
             Assert.equal(true, TC.parseBoolean(true));
             Assert.equal(true, TC.parseBoolean(1));
             Assert.equal(true, TC.parseBoolean("tRuE"));
@@ -534,12 +534,12 @@ describe("Direct Parse Functions:", function () {
                 TC.parseString(undefined);
             }, /Value is undefined and not optional/i);
             Assert.throws(() => {
-                TC.parseString("", undefined, 1);
+                TC.parseString("", { minLength: 1 });
             }, /String length constraint violation/i);
             Assert.throws(() => {
-                TC.parseString("12", undefined, undefined, 1);
+                TC.parseString("12", { maxLength: 1 });
             }, /String length constraint violation/i);
-            Assert.equal(undefined, TC.parseString(undefined, false));
+            Assert.equal(undefined, TC.parseString(undefined, { optional: true }));
             Assert.equal("true", TC.parseString(true));
         });
         it("should parse array patterns", function () {
@@ -555,9 +555,9 @@ describe("Direct Parse Functions:", function () {
             }, /String pattern constraint violation/i);
         });
         it("should parse string not whitespace", function () {
-            Assert.equal(" !", TC.parseStringNotWhitespace(" !"));
+            Assert.equal(" !", TC.parseNotWhitespace(" !"));
             Assert.throws(() => {
-                TC.parseStringNotWhitespace(`
+                TC.parseNotWhitespace(`
                      
                 
                 `);
@@ -581,7 +581,7 @@ describe("Direct Parse Functions:", function () {
             Assert.throws(() => {
                 TC.parseDate(1);
             }, /Invalid type/i);
-            Assert.equal(undefined, TC.parseDate(undefined, false));
+            Assert.equal(undefined, TC.parseDate(undefined, { optional: true }));
             let dateA = TC.parseDate("2017-02-23T19:01:50Z");
             let dateB = TC.parseDate("20170223T190150Z");
             let dateC = TC.parseDate("2017-02-23T16:01:50-03:00");
@@ -603,7 +603,7 @@ describe("Direct Parse Functions:", function () {
             Assert.throws(() => {
                 TC.parseCustomDate(1, customDateFormat);
             }, /Invalid type/i);
-            Assert.equal(undefined, TC.parseCustomDate(undefined, customDateFormat, false));
+            Assert.equal(undefined, TC.parseCustomDate(undefined, customDateFormat, undefined, { optional: true }));
             Assert(Moment("2017-02-23").isSame(TC.parseCustomDate("02 2017 23", customDateFormat)));
         });
     });

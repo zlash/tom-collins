@@ -24,44 +24,43 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 require("reflect-metadata");
-const Fields = require("./fields");
-class FieldOptions {
-}
-exports.FieldOptions = FieldOptions;
+const Parse = require("./parse");
 function Field(options) {
     return (target, propertyKey) => {
         let fields = Reflect.getMetadata("fields", target) || [];
         fields.push(propertyKey);
         Reflect.defineMetadata("fields", fields, target);
+        options = options || {};
+        if (options.targetType == undefined) {
+            options = {
+                constraints: options
+            };
+        }
         Reflect.defineMetadata("field:options", options, target, propertyKey);
     };
 }
 exports.Field = Field;
 function fillImplicitFieldSettings(type) {
     if (!Reflect.getMetadata("fields:options_explicited", type.prototype)) {
+        /*
         let fields = Reflect.getMetadata("fields", type.prototype);
         let allRequired = true;
+
         for (let field of fields) {
-            let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field);
-            if (fieldOptions != undefined && fieldOptions.required != undefined) {
-                allRequired = !fieldOptions.required;
+            let fieldOptions: Parse.ParseOptionsI = Reflect.getMetadata("field:options", type.prototype, field);
+            if (fieldOptions != undefined && fieldOptions.constraints != undefined && fieldOptions.constraints.optional != undefined) {
+                allRequired = fieldOptions.constraints.optional;
                 break;
             }
         }
+
         for (let field of fields) {
-            let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field) || new FieldOptions();
+            let fieldOptions: FieldOptions = Reflect.getMetadata("field:options", type.prototype, field) || new FieldOptions();
             fieldOptions.required = fieldOptions.required == undefined ? allRequired : fieldOptions.required;
             Reflect.defineMetadata("field:options", fieldOptions, type.prototype, field);
         }
+        */
         Reflect.defineMetadata("fields:options_explicited", true, type.prototype);
     }
 }
@@ -79,19 +78,23 @@ function parse(type, obj) {
     for (let field of fields) {
         let fieldType = Reflect.getMetadata("design:type", type.prototype, field);
         let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field);
+        if (fieldOptions.targetType == undefined) {
+            fieldOptions.targetType = fieldType;
+        }
+        fieldOptions.constraints = fieldOptions.constraints || {};
         try {
             if (checkIfTypeHasFieldsMetadata(fieldType)) {
-                if (obj[field] != undefined) {
-                    ret[field] = parse(fieldType, obj[field]);
+                if (obj[field] == undefined) {
+                    if (fieldOptions.constraints.optional !== true) {
+                        throw new Error("Value is undefined and not optional.");
+                    }
                 }
                 else {
-                    if (fieldOptions.required === true) {
-                        throw new Error(`Required field ${field} missing.`);
-                    }
+                    ret[field] = parse(fieldType, obj[field]);
                 }
             }
             else {
-                ret[field] = Fields.parseValue(fieldType, obj[field], __assign({}, fieldOptions.typeConstraints, { optional: (fieldOptions.required === false) }), fieldOptions.maps);
+                ret[field] = Parse.parseValue(fieldOptions, obj[field]);
             }
         }
         catch (err) {
@@ -101,72 +104,49 @@ function parse(type, obj) {
     return ret;
 }
 exports.parse = parse;
-function getAcceptedTypesForField(type, field) {
+/*
+TODO: REVIEW AND FIX
+
+export function getAcceptedTypesForField<T>(type: GenericConstructor<T>, field: string) {
+
     if (!checkIfTypeHasFieldsMetadata(type)) {
         return undefined;
     }
+
     fillImplicitFieldSettings(type);
-    let fieldOptions = Reflect.getMetadata("field:options", type.prototype, field);
+
+    let fieldOptions: FieldOptions = Reflect.getMetadata("field:options", type.prototype, field);
+
     let acceptedTypes = [Reflect.getMetadata("design:type", type.prototype, field)];
+
     if (fieldOptions != undefined) {
-        for (let map of fieldOptions.maps) {
+
+        for (let map of (fieldOptions.maps as Maps.Map[])) {
             if (acceptedTypes.indexOf(map.type) === -1) {
                 acceptedTypes.push(map.type);
             }
         }
+
     }
+
     return acceptedTypes;
 }
-exports.getAcceptedTypesForField = getAcceptedTypesForField;
-function reduce(type, callback, initialValue) {
+
+
+export function reduce<T, U>(type: GenericConstructor<T>, callback: (accumValue: U, fieldName: string, fieldOptions: FieldOptions) => U, initialValue: U): U {
     fillImplicitFieldSettings(type);
     let fields = Reflect.getMetadata("fields", type.prototype);
+
     if (fields == undefined) {
         throw new Error(`Type '${type.name}' does not have fields metadata.`);
     }
+
     for (let field of fields) {
         initialValue = callback(initialValue, field, Reflect.getMetadata("field:options", type.prototype, field));
     }
+
     return initialValue;
 }
-exports.reduce = reduce;
-// Reduce example
-function getTextRepresentation(type) {
-    return reduce(type, (accumValue, fieldName, fieldOptions) => {
-        accumValue += `Field: ${fieldName} ${fieldOptions.required ? "" : "[ Optional ]"}\n`;
-        accumValue += `Valid Types: ${getAcceptedTypesForField(type, fieldName).reduce((acc, cur) => {
-            return acc + ` ${cur.name} |`;
-        }, "").slice(0, -1)}\n`;
-        let extraConstraints = [];
-        if (fieldOptions.typeConstraints != undefined) {
-            if (fieldOptions.typeConstraints.minLength != undefined) {
-                extraConstraints.push(`Minimum acceptable length for string: ${fieldOptions.typeConstraints.minLength}`);
-            }
-            if (fieldOptions.typeConstraints.maxLength) {
-                extraConstraints.push(`Maximum acceptable length for string: ${fieldOptions.typeConstraints.maxLength}`);
-            }
-            if (fieldOptions.typeConstraints.pattern != undefined) {
-                extraConstraints.push(`The string must match the RegEx: '${fieldOptions.typeConstraints.pattern.toString()}'`);
-            }
-            if (fieldOptions.typeConstraints.multipleOf != undefined) {
-                extraConstraints.push(`Number must be a multiple of: ${fieldOptions.typeConstraints.multipleOf}`);
-            }
-            if (fieldOptions.typeConstraints.minimum != undefined) {
-                extraConstraints.push(`Number must be ${fieldOptions.typeConstraints.exclusiveMinimum === true ? " " : " equal or "}greater than ${fieldOptions.typeConstraints.minimum}`); // tslint:disable-line  
-            }
-            if (fieldOptions.typeConstraints.maximum) {
-                extraConstraints.push(`Number must be${fieldOptions.typeConstraints.exclusiveMaximum === true ? " " : " equal or "}less than ${fieldOptions.typeConstraints.maximum}`);
-            }
-        }
-        if (extraConstraints.length > 0) {
-            accumValue += `Constraints:\n`;
-            for (let c of extraConstraints) {
-                accumValue += `\t${c}\n`;
-            }
-        }
-        accumValue += "---------------------------------------------------------\n";
-        return accumValue;
-    }, "");
-}
-exports.getTextRepresentation = getTextRepresentation;
-//# sourceMappingURL=tom-collins.js.map
+
+*/ 
+//# sourceMappingURL=field.js.map

@@ -27,9 +27,10 @@ SOFTWARE.
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
-__export(require("./tom-collins"));
-__export(require("./fields"));
+__export(require("./field"));
+__export(require("./parse"));
 __export(require("./maps"));
-__export(require("./commonNumericFields"));
+__export(require("./commonParseOptions"));
 __export(require("./commonFields"));
+__export(require("./commonParse"));
 //# sourceMappingURL=index.js.map
