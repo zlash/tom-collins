@@ -31,32 +31,32 @@ import * as CPO from "./commonParseOptions";
  * Strings
  **********************************/
 
-export function parseString(value: any, constraints?: Parse.StringConstraints) {
-    return Parse.parseValue(CPO.string(constraints), value);
+export function parseString(value: any, constraints?: Parse.StringConstraints): string {
+    return Parse.parseValue(CPO.string(constraints), value) as string;
 }
 
-export function parseStringNotEmpty(value: any, constraints?: Parse.StringConstraints) {
-    return Parse.parseValue(CPO.stringNotEmpty(constraints), value);
+export function parseStringNotEmpty(value: any, constraints?: Parse.StringConstraints): string {
+    return Parse.parseValue(CPO.stringNotEmpty(constraints), value) as string;
 }
 
-export function parseStringPattern(value: any, pattern: Parse.StringConstraintPattern, constraints?: Parse.StringConstraints) {
-    return Parse.parseValue(CPO.stringPattern(pattern, constraints), value);
+export function parseStringPattern(value: any, pattern: Parse.StringConstraintPattern, constraints?: Parse.StringConstraints): string {
+    return Parse.parseValue(CPO.stringPattern(pattern, constraints), value) as string;
 }
 
-export function parseEmail(value: any, constraints?: Parse.StringConstraints) {
-    return Parse.parseValue(CPO.stringEmail(constraints), value);
+export function parseEmail(value: any, constraints?: Parse.StringConstraints): string {
+    return Parse.parseValue(CPO.stringEmail(constraints), value) as string;
 }
 
-export function parseNotWhitespace(value: any, constraints?: Parse.StringConstraints) {
-    return Parse.parseValue(CPO.stringNotWhitespace(constraints), value);
+export function parseNotWhitespace(value: any, constraints?: Parse.StringConstraints): string {
+    return Parse.parseValue(CPO.stringNotWhitespace(constraints), value) as string;
 }
 
 /**********************************
  * Booleans
  **********************************/
 
-export function parseBoolean(value: any, constraints?: Parse.StringConstraints) {
-    return Parse.parseValue(CPO.boolean(constraints), value);
+export function parseBoolean(value: any, constraints?: Parse.StringConstraints): boolean {
+    return Parse.parseValue(CPO.boolean(constraints), value) as boolean;
 }
 
 /**********************************
@@ -75,44 +75,44 @@ export function parseCustomDate(value: any, format: string, nonStrict = false, c
  * Numbers
  **********************************/
 
-export function parseFloat(value: any, constraints?: Parse.NumberConstraints) {
-    return Parse.parseValue(CPO.float(constraints), value);
+export function parseFloat(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.float(constraints), value) as number;
 }
 
-export function parsePositiveFloat(value: any, constraints?: Parse.NumberConstraints) {
-    return Parse.parseValue(CPO.positiveFloat(constraints), value);
+export function parsePositiveFloat(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.positiveFloat(constraints), value) as number;
 }
 
-export function parsePositiveNotZeroFloat(value: any, constraints?: Parse.NumberConstraints) {
-    return Parse.parseValue(CPO.positiveNotZeroFloat(constraints), value);
+export function parsePositiveNotZeroFloat(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.positiveNotZeroFloat(constraints), value) as number;
 }
 
-export function parseNegativeFloat(value: any, constraints?: Parse.NumberConstraints) {
-    return Parse.parseValue(CPO.negativeFloat(constraints), value);
+export function parseNegativeFloat(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.negativeFloat(constraints), value) as number;
 }
 
-export function parseNegativeNotZeroFloat(value: any, constraints?: Parse.NumberConstraints) {
-    return Parse.parseValue(CPO.negativeNotZeroFloat(constraints), value);
+export function parseNegativeNotZeroFloat(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.negativeNotZeroFloat(constraints), value) as number;
 }
 
-export function parseInteger(value: any, constraints?: Parse.NumberConstraints) {
-    return Parse.parseValue(CPO.integer(CPO.float, constraints), value);
+export function parseInteger(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.integer(CPO.float, constraints), value) as number;
 }
 
-export function parsePositiveInteger(value: any, constraints?: Parse.NumberConstraints) {
-    return Parse.parseValue(CPO.integer(CPO.positiveFloat, constraints), value);
+export function parsePositiveInteger(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.integer(CPO.positiveFloat, constraints), value) as number;
 }
 
-export function parsePositiveNotZeroInteger(value: any, constraints?: Parse.NumberConstraints) {
-    return Parse.parseValue(CPO.integer(CPO.positiveNotZeroFloat, constraints), value);
+export function parsePositiveNotZeroInteger(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.integer(CPO.positiveNotZeroFloat, constraints), value) as number;
 }
 
-export function parseNegativeInteger(value: any, constraints?: Parse.NumberConstraints) {
-    return Parse.parseValue(CPO.integer(CPO.negativeFloat, constraints), value);
+export function parseNegativeInteger(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.integer(CPO.negativeFloat, constraints), value) as number;
 }
 
-export function parseNegativeNotZeroInteger(value: any, constraints?: Parse.NumberConstraints) {
-    return Parse.parseValue(CPO.integer(CPO.negativeNotZeroFloat, constraints), value);
+export function parseNegativeNotZeroInteger(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.integer(CPO.negativeNotZeroFloat, constraints), value) as number;
 }
 
 /**********************************

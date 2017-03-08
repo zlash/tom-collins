@@ -27,15 +27,15 @@ import * as Parse from "./parse";
 /**********************************
  * Strings
  **********************************/
-export declare function parseString(value: any, constraints?: Parse.StringConstraints): String;
-export declare function parseStringNotEmpty(value: any, constraints?: Parse.StringConstraints): String;
-export declare function parseStringPattern(value: any, pattern: Parse.StringConstraintPattern, constraints?: Parse.StringConstraints): String;
-export declare function parseEmail(value: any, constraints?: Parse.StringConstraints): String;
-export declare function parseNotWhitespace(value: any, constraints?: Parse.StringConstraints): String;
+export declare function parseString(value: any, constraints?: Parse.StringConstraints): string;
+export declare function parseStringNotEmpty(value: any, constraints?: Parse.StringConstraints): string;
+export declare function parseStringPattern(value: any, pattern: Parse.StringConstraintPattern, constraints?: Parse.StringConstraints): string;
+export declare function parseEmail(value: any, constraints?: Parse.StringConstraints): string;
+export declare function parseNotWhitespace(value: any, constraints?: Parse.StringConstraints): string;
 /**********************************
  * Booleans
  **********************************/
-export declare function parseBoolean(value: any, constraints?: Parse.StringConstraints): Boolean;
+export declare function parseBoolean(value: any, constraints?: Parse.StringConstraints): boolean;
 /**********************************
  * Dates
  **********************************/
@@ -44,16 +44,16 @@ export declare function parseCustomDate(value: any, format: string, nonStrict?: 
 /**********************************
  * Numbers
  **********************************/
-export declare function parseFloat(value: any, constraints?: Parse.NumberConstraints): Number;
-export declare function parsePositiveFloat(value: any, constraints?: Parse.NumberConstraints): Number;
-export declare function parsePositiveNotZeroFloat(value: any, constraints?: Parse.NumberConstraints): Number;
-export declare function parseNegativeFloat(value: any, constraints?: Parse.NumberConstraints): Number;
-export declare function parseNegativeNotZeroFloat(value: any, constraints?: Parse.NumberConstraints): Number;
-export declare function parseInteger(value: any, constraints?: Parse.NumberConstraints): {};
-export declare function parsePositiveInteger(value: any, constraints?: Parse.NumberConstraints): {};
-export declare function parsePositiveNotZeroInteger(value: any, constraints?: Parse.NumberConstraints): {};
-export declare function parseNegativeInteger(value: any, constraints?: Parse.NumberConstraints): {};
-export declare function parseNegativeNotZeroInteger(value: any, constraints?: Parse.NumberConstraints): {};
+export declare function parseFloat(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parsePositiveFloat(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parsePositiveNotZeroFloat(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parseNegativeFloat(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parseNegativeNotZeroFloat(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parseInteger(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parsePositiveInteger(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parsePositiveNotZeroInteger(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parseNegativeInteger(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parseNegativeNotZeroInteger(value: any, constraints?: Parse.NumberConstraints): number;
 /**********************************
  * Arrays
  **********************************/
