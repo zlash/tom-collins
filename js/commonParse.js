@@ -42,13 +42,21 @@ function parseStringPattern(value, pattern, constraints) {
 }
 exports.parseStringPattern = parseStringPattern;
 function parseEmail(value, constraints) {
-    return Parse.parseValue(CPO.stringEmail(constraints), value);
+    return Parse.parseValue(CPO.email(constraints), value);
 }
 exports.parseEmail = parseEmail;
 function parseNotWhitespace(value, constraints) {
-    return Parse.parseValue(CPO.stringNotWhitespace(constraints), value);
+    return Parse.parseValue(CPO.notWhitespace(constraints), value);
 }
 exports.parseNotWhitespace = parseNotWhitespace;
+function parseUrl(value, constraints) {
+    return Parse.parseValue(CPO.url(constraints), value);
+}
+exports.parseUrl = parseUrl;
+function parseUUID(value, constraints) {
+    return Parse.parseValue(CPO.uuid(constraints), value);
+}
+exports.parseUUID = parseUUID;
 /**********************************
  * Booleans
  **********************************/
@@ -90,6 +98,14 @@ function parseNegativeNotZeroFloat(value, constraints) {
     return Parse.parseValue(CPO.negativeNotZeroFloat(constraints), value);
 }
 exports.parseNegativeNotZeroFloat = parseNegativeNotZeroFloat;
+function parseLatitude(value, constraints) {
+    return Parse.parseValue(CPO.latitude(constraints), value);
+}
+exports.parseLatitude = parseLatitude;
+function parseLongitude(value, constraints) {
+    return Parse.parseValue(CPO.longitude(constraints), value);
+}
+exports.parseLongitude = parseLongitude;
 function parseInteger(value, constraints) {
     return Parse.parseValue(CPO.integer(CPO.float, constraints), value);
 }

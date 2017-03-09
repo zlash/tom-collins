@@ -33,5 +33,7 @@ export declare class Pattern {
 }
 export declare class PredefinedPatterns {
     static email: Pattern;
+    static url: Pattern;
+    static uuid: Pattern;
     static notWhitespace: Pattern;
 }

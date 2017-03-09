@@ -39,6 +39,20 @@ export class PredefinedPatterns {
         }]
     };
 
+    static url: Pattern = {
+        name: "Url",
+        matchers: [{
+            regex: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/,
+        }]
+    };
+
+    static uuid: Pattern = {
+        name: "UUID",
+        matchers: [{
+            regex: /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/,
+        }]
+    };
+
     static notWhitespace: Pattern = {
         name: "Not whitespace",
         matchers: [{

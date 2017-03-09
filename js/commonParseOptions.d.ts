@@ -43,12 +43,22 @@ export declare function stringPattern(pattern: Parse.StringConstraintPattern, co
     constraints: Parse.StringConstraints;
     maps: Maps.Map;
 };
-export declare function stringEmail(constraints?: Parse.StringConstraints): {
+export declare function email(constraints?: Parse.StringConstraints): {
     targetType: StringConstructor;
     constraints: Parse.StringConstraints;
     maps: Maps.Map;
 };
-export declare function stringNotWhitespace(constraints?: Parse.StringConstraints): {
+export declare function notWhitespace(constraints?: Parse.StringConstraints): {
+    targetType: StringConstructor;
+    constraints: Parse.StringConstraints;
+    maps: Maps.Map;
+};
+export declare function url(constraints?: Parse.StringConstraints): {
+    targetType: StringConstructor;
+    constraints: Parse.StringConstraints;
+    maps: Maps.Map;
+};
+export declare function uuid(constraints?: Parse.StringConstraints): {
     targetType: StringConstructor;
     constraints: Parse.StringConstraints;
     maps: Maps.Map;
@@ -98,6 +108,16 @@ export declare function negativeFloat(constraints?: Parse.NumberConstraints): {
     maps: Maps.Map;
 };
 export declare function negativeNotZeroFloat(constraints?: Parse.NumberConstraints): {
+    targetType: NumberConstructor;
+    constraints: Parse.NumberConstraints;
+    maps: Maps.Map;
+};
+export declare function latitude(constraints?: Parse.NumberConstraints): {
+    targetType: NumberConstructor;
+    constraints: Parse.NumberConstraints;
+    maps: Maps.Map;
+};
+export declare function longitude(constraints?: Parse.NumberConstraints): {
     targetType: NumberConstructor;
     constraints: Parse.NumberConstraints;
     maps: Maps.Map;

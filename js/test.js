@@ -464,6 +464,16 @@ describe("Direct Parse Functions:", function () {
                 TC.parseNegativeNotZeroFloat("0");
             }, /value must be less than 0/i);
         });
+        it("should parse latitude/longitude", function () {
+            Assert.throws(() => {
+                TC.parseLatitude("100");
+            }, /value must be equal or less than 90/i);
+            Assert.throws(() => {
+                TC.parseLongitude("-200");
+            }, /value must be equal or greater than -180/i);
+            Assert.equal(0.5, TC.parseLatitude("0.5"));
+            Assert.equal(0.5, TC.parseLongitude("0.5"));
+        });
     });
     describe("Integers:", function () {
         it("should parse integers", function () {
@@ -552,6 +562,18 @@ describe("Direct Parse Functions:", function () {
             Assert.equal("mr.a@test.co.jp", TC.parseEmail("mr.a@test.co.jp"));
             Assert.throws(() => {
                 TC.parseEmail("www.ddg.gg");
+            }, /String pattern constraint violation/i);
+        });
+        it("should parse url", function () {
+            Assert.equal("https://test.com", TC.parseUrl("https://test.com"));
+            Assert.throws(() => {
+                TC.parseUrl("www.ddg.gg");
+            }, /String pattern constraint violation/i);
+        });
+        it("should parse uuid", function () {
+            Assert.equal("123e4567-e89b-12d3-a456-426655440000", TC.parseUUID("123e4567-e89b-12d3-a456-426655440000"));
+            Assert.throws(() => {
+                TC.parseUrl("123e4567-e89g-12d3-a456-426655440000");
             }, /String pattern constraint violation/i);
         });
         it("should parse string not whitespace", function () {

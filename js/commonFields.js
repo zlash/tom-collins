@@ -42,13 +42,21 @@ function StringPattern(pattern, constraints) {
 }
 exports.StringPattern = StringPattern;
 function Email(constraints) {
-    return F.Field(CPO.stringEmail(constraints));
+    return F.Field(CPO.email(constraints));
 }
 exports.Email = Email;
 function NotWhitespace(constraints) {
-    return F.Field(CPO.stringNotWhitespace(constraints));
+    return F.Field(CPO.notWhitespace(constraints));
 }
 exports.NotWhitespace = NotWhitespace;
+function Url(constraints) {
+    return F.Field(CPO.url(constraints));
+}
+exports.Url = Url;
+function UUID(constraints) {
+    return F.Field(CPO.uuid(constraints));
+}
+exports.UUID = UUID;
 /**********************************
  * Booleans
  **********************************/
@@ -90,6 +98,14 @@ function NegativeNotZeroFloat(constraints) {
     return F.Field(CPO.negativeNotZeroFloat(constraints));
 }
 exports.NegativeNotZeroFloat = NegativeNotZeroFloat;
+function Latitude(constraints) {
+    return F.Field(CPO.latitude(constraints));
+}
+exports.Latitude = Latitude;
+function Longitude(constraints) {
+    return F.Field(CPO.longitude(constraints));
+}
+exports.Longitude = Longitude;
 function Integer(constraints) {
     return F.Field(CPO.integer(CPO.float, constraints));
 }

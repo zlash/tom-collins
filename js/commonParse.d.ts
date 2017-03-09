@@ -32,6 +32,8 @@ export declare function parseStringNotEmpty(value: any, constraints?: Parse.Stri
 export declare function parseStringPattern(value: any, pattern: Parse.StringConstraintPattern, constraints?: Parse.StringConstraints): string;
 export declare function parseEmail(value: any, constraints?: Parse.StringConstraints): string;
 export declare function parseNotWhitespace(value: any, constraints?: Parse.StringConstraints): string;
+export declare function parseUrl(value: any, constraints?: Parse.StringConstraints): string;
+export declare function parseUUID(value: any, constraints?: Parse.StringConstraints): string;
 /**********************************
  * Booleans
  **********************************/
@@ -49,6 +51,8 @@ export declare function parsePositiveFloat(value: any, constraints?: Parse.Numbe
 export declare function parsePositiveNotZeroFloat(value: any, constraints?: Parse.NumberConstraints): number;
 export declare function parseNegativeFloat(value: any, constraints?: Parse.NumberConstraints): number;
 export declare function parseNegativeNotZeroFloat(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parseLatitude(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parseLongitude(value: any, constraints?: Parse.NumberConstraints): number;
 export declare function parseInteger(value: any, constraints?: Parse.NumberConstraints): number;
 export declare function parsePositiveInteger(value: any, constraints?: Parse.NumberConstraints): number;
 export declare function parsePositiveNotZeroInteger(value: any, constraints?: Parse.NumberConstraints): number;

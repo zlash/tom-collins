@@ -7,6 +7,8 @@ export declare function StringNotEmpty(constraints?: Parse.StringConstraints): (
 export declare function StringPattern(pattern: Parse.StringConstraintPattern, constraints?: Parse.StringConstraints): (target: any, propertyKey: string | symbol) => void;
 export declare function Email(constraints?: Parse.StringConstraints): (target: any, propertyKey: string | symbol) => void;
 export declare function NotWhitespace(constraints?: Parse.StringConstraints): (target: any, propertyKey: string | symbol) => void;
+export declare function Url(constraints?: Parse.StringConstraints): (target: any, propertyKey: string | symbol) => void;
+export declare function UUID(constraints?: Parse.StringConstraints): (target: any, propertyKey: string | symbol) => void;
 /**********************************
  * Booleans
  **********************************/
@@ -24,6 +26,8 @@ export declare function PositiveFloat(constraints?: Parse.NumberConstraints): (t
 export declare function PositiveNotZeroFloat(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
 export declare function NegativeFloat(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
 export declare function NegativeNotZeroFloat(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
+export declare function Latitude(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
+export declare function Longitude(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
 export declare function Integer(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
 export declare function PositiveInteger(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
 export declare function PositiveNotZeroInteger(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;

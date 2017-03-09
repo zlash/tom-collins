@@ -52,12 +52,20 @@ export function stringPattern(pattern: Parse.StringConstraintPattern, constraint
     return string(constraints);
 }
 
-export function stringEmail(constraints?: Parse.StringConstraints) {
+export function email(constraints?: Parse.StringConstraints) {
     return stringPattern(Patterns.PredefinedPatterns.email, constraints);
 }
 
-export function stringNotWhitespace(constraints?: Parse.StringConstraints) {
+export function notWhitespace(constraints?: Parse.StringConstraints) {
     return stringPattern(Patterns.PredefinedPatterns.notWhitespace, constraints);
+}
+
+export function url(constraints?: Parse.StringConstraints) {
+    return stringPattern(Patterns.PredefinedPatterns.url, constraints);
+}
+
+export function uuid(constraints?: Parse.StringConstraints) {
+    return stringPattern(Patterns.PredefinedPatterns.uuid, constraints);
 }
 
 /**********************************
@@ -134,6 +142,20 @@ export function negativeNotZeroFloat(constraints?: Parse.NumberConstraints) {
     constraints = constraints || {};
     constraints.maximum = (constraints.maximum && constraints.maximum < 0) ? constraints.maximum : 0;
     constraints.exclusiveMaximum = true;
+    return float(constraints);
+}
+
+export function latitude(constraints?: Parse.NumberConstraints) {
+    constraints = constraints || {};
+    constraints.minimum = (constraints.minimum && constraints.minimum > -90) ? constraints.minimum : -90;
+    constraints.maximum = (constraints.maximum && constraints.maximum < 90) ? constraints.maximum : 90;
+    return float(constraints);
+}
+
+export function longitude(constraints?: Parse.NumberConstraints) {
+    constraints = constraints || {};
+    constraints.minimum = (constraints.minimum && constraints.minimum > -180) ? constraints.minimum : -180;
+    constraints.maximum = (constraints.maximum && constraints.maximum < 180) ? constraints.maximum : 180;
     return float(constraints);
 }
 

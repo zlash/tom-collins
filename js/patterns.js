@@ -35,6 +35,18 @@ PredefinedPatterns.email = {
             regex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
         }]
 };
+PredefinedPatterns.url = {
+    name: "Url",
+    matchers: [{
+            regex: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/,
+        }]
+};
+PredefinedPatterns.uuid = {
+    name: "UUID",
+    matchers: [{
+            regex: /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/,
+        }]
+};
 PredefinedPatterns.notWhitespace = {
     name: "Not whitespace",
     matchers: [{

@@ -45,11 +45,19 @@ export function StringPattern(pattern: Parse.StringConstraintPattern, constraint
 }
 
 export function Email(constraints?: Parse.StringConstraints) {
-    return F.Field(CPO.stringEmail(constraints));
+    return F.Field(CPO.email(constraints));
 }
 
 export function NotWhitespace(constraints?: Parse.StringConstraints) {
-    return F.Field(CPO.stringNotWhitespace(constraints));
+    return F.Field(CPO.notWhitespace(constraints));
+}
+
+export function Url(constraints?: Parse.StringConstraints) {
+    return F.Field(CPO.url(constraints));
+}
+
+export function UUID(constraints?: Parse.StringConstraints) {
+    return F.Field(CPO.uuid(constraints));
 }
 
 /**********************************
@@ -94,6 +102,14 @@ export function NegativeFloat(constraints?: Parse.NumberConstraints) {
 
 export function NegativeNotZeroFloat(constraints?: Parse.NumberConstraints) {
     return F.Field(CPO.negativeNotZeroFloat(constraints));
+}
+
+export function Latitude(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.latitude(constraints));
+}
+
+export function Longitude(constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.longitude(constraints));
 }
 
 export function Integer(constraints?: Parse.NumberConstraints) {

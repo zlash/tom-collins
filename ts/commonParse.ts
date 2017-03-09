@@ -44,11 +44,19 @@ export function parseStringPattern(value: any, pattern: Parse.StringConstraintPa
 }
 
 export function parseEmail(value: any, constraints?: Parse.StringConstraints): string {
-    return Parse.parseValue(CPO.stringEmail(constraints), value) as string;
+    return Parse.parseValue(CPO.email(constraints), value) as string;
 }
 
 export function parseNotWhitespace(value: any, constraints?: Parse.StringConstraints): string {
-    return Parse.parseValue(CPO.stringNotWhitespace(constraints), value) as string;
+    return Parse.parseValue(CPO.notWhitespace(constraints), value) as string;
+}
+
+export function parseUrl(value: any, constraints?: Parse.StringConstraints): string {
+    return Parse.parseValue(CPO.url(constraints), value) as string;
+}
+
+export function parseUUID(value: any, constraints?: Parse.StringConstraints): string {
+    return Parse.parseValue(CPO.uuid(constraints), value) as string;
 }
 
 /**********************************
@@ -93,6 +101,14 @@ export function parseNegativeFloat(value: any, constraints?: Parse.NumberConstra
 
 export function parseNegativeNotZeroFloat(value: any, constraints?: Parse.NumberConstraints): number {
     return Parse.parseValue(CPO.negativeNotZeroFloat(constraints), value) as number;
+}
+
+export function parseLatitude(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.latitude(constraints), value) as number;
+}
+
+export function parseLongitude(value: any, constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.longitude(constraints), value) as number;
 }
 
 export function parseInteger(value: any, constraints?: Parse.NumberConstraints): number {

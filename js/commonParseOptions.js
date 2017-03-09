@@ -49,14 +49,22 @@ function stringPattern(pattern, constraints) {
     return string(constraints);
 }
 exports.stringPattern = stringPattern;
-function stringEmail(constraints) {
+function email(constraints) {
     return stringPattern(Patterns.PredefinedPatterns.email, constraints);
 }
-exports.stringEmail = stringEmail;
-function stringNotWhitespace(constraints) {
+exports.email = email;
+function notWhitespace(constraints) {
     return stringPattern(Patterns.PredefinedPatterns.notWhitespace, constraints);
 }
-exports.stringNotWhitespace = stringNotWhitespace;
+exports.notWhitespace = notWhitespace;
+function url(constraints) {
+    return stringPattern(Patterns.PredefinedPatterns.url, constraints);
+}
+exports.url = url;
+function uuid(constraints) {
+    return stringPattern(Patterns.PredefinedPatterns.uuid, constraints);
+}
+exports.uuid = uuid;
 /**********************************
  * Booleans
  **********************************/
@@ -131,6 +139,20 @@ function negativeNotZeroFloat(constraints) {
     return float(constraints);
 }
 exports.negativeNotZeroFloat = negativeNotZeroFloat;
+function latitude(constraints) {
+    constraints = constraints || {};
+    constraints.minimum = (constraints.minimum && constraints.minimum > -90) ? constraints.minimum : -90;
+    constraints.maximum = (constraints.maximum && constraints.maximum < 90) ? constraints.maximum : 90;
+    return float(constraints);
+}
+exports.latitude = latitude;
+function longitude(constraints) {
+    constraints = constraints || {};
+    constraints.minimum = (constraints.minimum && constraints.minimum > -180) ? constraints.minimum : -180;
+    constraints.maximum = (constraints.maximum && constraints.maximum < 180) ? constraints.maximum : 180;
+    return float(constraints);
+}
+exports.longitude = longitude;
 function integer(floatCPOGenerator, constraints) {
     constraints = constraints || {};
     constraints.multipleOf = constraints.multipleOf || 1;
