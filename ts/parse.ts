@@ -138,6 +138,7 @@ export function stringConstraintPatternToPattern(pattern: StringConstraintPatter
     return pattern;
 }
 
+
 function checkPODtype(obj: any, podType: any) {
     if (podType === String && ((typeof obj) === "string" || obj instanceof String)) {
         return true;
@@ -191,9 +192,15 @@ export function parseValue<T>(options: ParseOptions<T>, value: any): T {
             }
 
             if (constraintsArray.underlyingTypeParseOptions != undefined) {
+                let uType = constraintsArray.underlyingTypeParseOptions.targetType;
+                let hasMetadata = Field.checkIfTypeHasFieldsMetadata(uType);
                 for (let i = 0; i < valueArray.length; i++) {
                     try {
-                        valueArray[i] = parseValue(constraintsArray.underlyingTypeParseOptions, valueArray[i]);
+                        if (!hasMetadata) {
+                            valueArray[i] = parseValue(constraintsArray.underlyingTypeParseOptions, valueArray[i]);
+                        } else {
+                            valueArray[i] = Field.parse(uType, valueArray[i]);
+                        }
                     } catch (err) {
                         throw new Error(`Element at [${i}]: ${err.message}`);
                     }

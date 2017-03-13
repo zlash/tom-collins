@@ -747,6 +747,16 @@ describe("Direct Parse Functions:", function () {
             TC.parseArray(["a", "b", "c"], TC.string());
         });
 
+
+        it("should deal correctly with anonimous types", function () {
+            Assert.throws(() => {
+                TC.parseArray([{ bool: true }, "nop"], { targetType: ForBooleanTests });
+            }, /Parse failed for field bool: Value is undefined and not optional/i);
+
+            TC.parseArray([{ bool: true }, { bool: false }], { targetType: ForBooleanTests });
+        });
+
+
     });
 
 });

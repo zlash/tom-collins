@@ -24,6 +24,7 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
+const Field = require("./field");
 class ArrayConstraints {
 }
 exports.ArrayConstraints = ArrayConstraints;
@@ -101,9 +102,16 @@ function parseValue(options, value) {
                 throw new Error(`Array length constraint violation, it must be ${constraintsArray.maxLength} or less characters long.`);
             }
             if (constraintsArray.underlyingTypeParseOptions != undefined) {
+                let uType = constraintsArray.underlyingTypeParseOptions.targetType;
+                let hasMetadata = Field.checkIfTypeHasFieldsMetadata(uType);
                 for (let i = 0; i < valueArray.length; i++) {
                     try {
-                        valueArray[i] = parseValue(constraintsArray.underlyingTypeParseOptions, valueArray[i]);
+                        if (!hasMetadata) {
+                            valueArray[i] = parseValue(constraintsArray.underlyingTypeParseOptions, valueArray[i]);
+                        }
+                        else {
+                            valueArray[i] = Field.parse(uType, valueArray[i]);
+                        }
                     }
                     catch (err) {
                         throw new Error(`Element at [${i}]: ${err.message}`);
