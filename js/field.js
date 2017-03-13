@@ -98,7 +98,7 @@ function parse(type, obj) {
             }
         }
         catch (err) {
-            throw new Error(`Parse failed for field ${field}: ` + err.message);
+            throw new Error(`Parse failed for field ${field}: ${err.message} || [With Payload: ${JSON.stringify(obj[field])}]`);
         }
     }
     return ret;

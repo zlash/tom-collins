@@ -110,7 +110,7 @@ export function parse<T>(type: GenericConstructor<T>, obj: any): T {
                 ret[field] = Parse.parseValue(fieldOptions, obj[field]);
             }
         } catch (err) {
-            throw new Error(`Parse failed for field ${field}: ` + err.message);
+            throw new Error(`Parse failed for field ${field}: ${err.message} || [With Payload: ${JSON.stringify(obj[field])}]`);
         }
 
     }
