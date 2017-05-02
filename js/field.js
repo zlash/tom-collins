@@ -24,6 +24,7 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const Parse = require("./parse");
 function Field(options) {
@@ -132,21 +133,17 @@ export function getAcceptedTypesForField<T>(type: GenericConstructor<T>, field: 
     return acceptedTypes;
 }
 
-
-export function reduce<T, U>(type: GenericConstructor<T>, callback: (accumValue: U, fieldName: string, fieldOptions: FieldOptions) => U, initialValue: U): U {
+*/
+function reduce(type, callback, initialValue) {
     fillImplicitFieldSettings(type);
     let fields = Reflect.getMetadata("fields", type.prototype);
-
     if (fields == undefined) {
         throw new Error(`Type '${type.name}' does not have fields metadata.`);
     }
-
     for (let field of fields) {
-        initialValue = callback(initialValue, field, Reflect.getMetadata("field:options", type.prototype, field));
+        initialValue = callback(initialValue, field, Reflect.getMetadata("design:type", type.prototype, field), Reflect.getMetadata("field:options", type.prototype, field));
     }
-
     return initialValue;
 }
-
-*/ 
+exports.reduce = reduce;
 //# sourceMappingURL=field.js.map

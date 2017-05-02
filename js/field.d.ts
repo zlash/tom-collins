@@ -31,3 +31,4 @@ export declare type GenericConstructor<T> = {
 };
 export declare function checkIfTypeHasFieldsMetadata<T>(type: GenericConstructor<T>): boolean;
 export declare function parse<T>(type: GenericConstructor<T>, obj: any): T;
+export declare function reduce<T, U>(type: GenericConstructor<T>, callback: (accumValue: U, fieldName: string, type?: any, fieldOptions?: Parse.ParseOptionsI) => U, initialValue: U): U;

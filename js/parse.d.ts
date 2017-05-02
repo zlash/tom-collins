@@ -103,4 +103,5 @@ export declare class ParseOptions<T> implements ParseOptionsI {
     maps?: Maps.Map | Maps.Map[];
 }
 export declare function stringConstraintPatternToPattern(pattern: StringConstraintPattern): Patterns.Pattern;
+export declare function getTypeString(type: any): "string" | "number" | "date" | "boolean";
 export declare function parseValue<T>(options: ParseOptions<T>, value: any): T;

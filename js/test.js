@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const TC = require("./index");
 const Assert = require("assert");
 const Moment = require("moment");
@@ -151,6 +152,24 @@ __decorate([
     TC.Field(),
     __metadata("design:type", String)
 ], TypeWithNestedField.prototype, "name", void 0);
+class MixedType {
+}
+__decorate([
+    TC.NotWhitespace(),
+    __metadata("design:type", String)
+], MixedType.prototype, "str", void 0);
+__decorate([
+    TC.Field(),
+    __metadata("design:type", Date)
+], MixedType.prototype, "date", void 0);
+__decorate([
+    TC.Field(),
+    __metadata("design:type", Number)
+], MixedType.prototype, "number", void 0);
+__decorate([
+    TC.Field(),
+    __metadata("design:type", Boolean)
+], MixedType.prototype, "bool", void 0);
 describe("Fields:", function () {
     describe("General:", function () {
         it("should parse an object missing an optional property", function () {
@@ -551,6 +570,7 @@ describe("Direct Parse Functions:", function () {
             }, /String length constraint violation/i);
             Assert.equal(undefined, TC.parseString(undefined, { optional: true }));
             Assert.equal("true", TC.parseString(true));
+            Assert.equal("", TC.parseString(""));
         });
         it("should parse array patterns", function () {
             Assert.equal("banana", TC.parseStringPattern("banana", ["banana", "apple"]));
@@ -644,6 +664,18 @@ describe("Direct Parse Functions:", function () {
                 TC.parseArray([{ bool: true }, "nop"], { targetType: ForBooleanTests });
             }, /Parse failed for field bool: Value is undefined and not optional/i);
             TC.parseArray([{ bool: true }, { bool: false }], { targetType: ForBooleanTests });
+        });
+    });
+    describe("Reduce operation:", function () {
+        it("should pass all parameters correctly", function () {
+            let typeMap = TC.reduce(MixedType, (accum, fieldName, type) => {
+                accum[fieldName] = TC.getTypeString(type);
+                return accum;
+            }, {});
+            Assert.equal(typeMap["str"], "string");
+            Assert.equal(typeMap["date"], "date");
+            Assert.equal(typeMap["number"], "number");
+            Assert.equal(typeMap["bool"], "boolean");
         });
     });
 });

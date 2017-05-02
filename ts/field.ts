@@ -117,6 +117,8 @@ export function parse<T>(type: GenericConstructor<T>, obj: any): T {
     return ret;
 }
 
+
+
 /*
 TODO: REVIEW AND FIX
 
@@ -145,8 +147,9 @@ export function getAcceptedTypesForField<T>(type: GenericConstructor<T>, field: 
     return acceptedTypes; 
 }
 
+*/
 
-export function reduce<T, U>(type: GenericConstructor<T>, callback: (accumValue: U, fieldName: string, fieldOptions: FieldOptions) => U, initialValue: U): U {
+export function reduce<T, U>(type: GenericConstructor<T>, callback: (accumValue: U, fieldName: string, type?: any, fieldOptions?: Parse.ParseOptionsI) => U, initialValue: U): U {
     fillImplicitFieldSettings(type);
     let fields = Reflect.getMetadata("fields", type.prototype);
 
@@ -155,10 +158,8 @@ export function reduce<T, U>(type: GenericConstructor<T>, callback: (accumValue:
     }
 
     for (let field of fields) {
-        initialValue = callback(initialValue, field, Reflect.getMetadata("field:options", type.prototype, field));
+        initialValue = callback(initialValue, field, Reflect.getMetadata("design:type", type.prototype, field), Reflect.getMetadata("field:options", type.prototype, field));
     }
 
     return initialValue;
 }
-
-*/

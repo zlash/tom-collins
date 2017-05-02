@@ -24,6 +24,7 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const F = require("./field");
 const CPO = require("./commonParseOptions");
 /**********************************

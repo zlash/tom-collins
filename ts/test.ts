@@ -130,6 +130,20 @@ class TypeWithNestedField {
     name: string;
 }
 
+class MixedType {
+    @TC.NotWhitespace()
+    str: string;
+
+    @TC.Field()
+    date: Date;
+
+    @TC.Field()
+    number: number;
+
+    @TC.Field()
+    bool: boolean;
+}
+
 describe("Fields:", function () {
 
     describe("General:", function () {
@@ -627,6 +641,7 @@ describe("Direct Parse Functions:", function () {
 
             Assert.equal(undefined, TC.parseString(undefined, { optional: true }));
             Assert.equal("true", TC.parseString(true));
+            Assert.equal("", TC.parseString(""));
         });
 
         it("should parse array patterns", function () {
@@ -757,6 +772,20 @@ describe("Direct Parse Functions:", function () {
         });
 
 
+    });
+
+    describe("Reduce operation:", function () {
+        it("should pass all parameters correctly", function () {
+            let typeMap: any = TC.reduce(MixedType, (accum: any, fieldName: string, type: any) => {
+                accum[fieldName] = TC.getTypeString(type);
+                return accum;
+            }, {});
+
+            Assert.equal(typeMap["str"], "string");
+            Assert.equal(typeMap["date"], "date");
+            Assert.equal(typeMap["number"], "number");
+            Assert.equal(typeMap["bool"], "boolean");
+        });
     });
 
 });

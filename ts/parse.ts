@@ -150,6 +150,21 @@ function checkPODtype(obj: any, podType: any) {
     return false;
 }
 
+
+export function getTypeString(type: any) {
+    if (type === String) {
+        return "string";
+    } else if (type === Number) {
+        return "number";
+    } else if (type === Boolean) {
+        return "boolean";
+    } else if (type === Date) {
+        return "date";
+    }
+    return undefined;
+}
+
+
 export function parseValue<T>(options: ParseOptions<T>, value: any): T {
 
     if (value == undefined) {

@@ -24,6 +24,7 @@ SOFTWARE.
 
 *********************************************************************************/
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Field = require("./field");
 class ArrayConstraints {
 }
@@ -70,6 +71,22 @@ function checkPODtype(obj, podType) {
     }
     return false;
 }
+function getTypeString(type) {
+    if (type === String) {
+        return "string";
+    }
+    else if (type === Number) {
+        return "number";
+    }
+    else if (type === Boolean) {
+        return "boolean";
+    }
+    else if (type === Date) {
+        return "date";
+    }
+    return undefined;
+}
+exports.getTypeString = getTypeString;
 function parseValue(options, value) {
     if (value == undefined) {
         if (options.constraints == undefined || (options.constraints != undefined && options.constraints.optional !== true)) {
