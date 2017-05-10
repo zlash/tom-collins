@@ -49,7 +49,7 @@ export class PredefinedPatterns {
     static uuid: Pattern = {
         name: "UUID",
         matchers: [{
-            regex: /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/,
+            regex: /^[^\W_]{8}-[^\W_]{4}-[^\W_]{4}-[^\W_]{4}-[^\W_]{12}$/,
         }]
     };
 

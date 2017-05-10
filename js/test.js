@@ -592,6 +592,7 @@ describe("Direct Parse Functions:", function () {
         });
         it("should parse uuid", function () {
             Assert.equal("123e4567-e89b-12d3-a456-426655440000", TC.parseUUID("123e4567-e89b-12d3-a456-426655440000"));
+            Assert.equal("123E4567-e89b-12d3-A456-426655440000", TC.parseUUID("123E4567-e89b-12d3-A456-426655440000"));
             Assert.throws(() => {
                 TC.parseUrl("123e4567-e89g-12d3-a456-426655440000");
             }, /String pattern constraint violation/i);
@@ -672,10 +673,10 @@ describe("Direct Parse Functions:", function () {
                 accum[fieldName] = TC.getTypeString(type);
                 return accum;
             }, {});
-            Assert.equal(typeMap["str"], "string");
-            Assert.equal(typeMap["date"], "date");
-            Assert.equal(typeMap["number"], "number");
-            Assert.equal(typeMap["bool"], "boolean");
+            Assert.equal(typeMap.str, "string");
+            Assert.equal(typeMap.date, "date");
+            Assert.equal(typeMap.number, "number");
+            Assert.equal(typeMap.bool, "boolean");
         });
     });
 });
