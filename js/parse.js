@@ -26,6 +26,11 @@ SOFTWARE.
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Field = require("./field");
+let emptyStringIsUndefinedForOptionalCheck = false;
+function setEmptyStringIsUndefinedForOptionalCheck(val) {
+    emptyStringIsUndefinedForOptionalCheck = val;
+}
+exports.setEmptyStringIsUndefinedForOptionalCheck = setEmptyStringIsUndefinedForOptionalCheck;
 class ArrayConstraints {
 }
 exports.ArrayConstraints = ArrayConstraints;
@@ -93,6 +98,10 @@ function parseValue(options, value) {
             throw new Error("Value is undefined and not optional.");
         }
         return value;
+    }
+    if (emptyStringIsUndefinedForOptionalCheck === true && options.constraints != undefined && options.constraints.optional === true
+        && getTypeString(options.targetType) === "string" && value === "") {
+        return undefined;
     }
     if (options.maps != undefined) {
         if (!(options.maps instanceof Array)) {

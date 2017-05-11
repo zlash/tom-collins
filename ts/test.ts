@@ -92,6 +92,11 @@ class ForBooleanTests {
     bool: boolean;
 }
 
+class ForOptionalStringTest {
+    @TC.NotWhitespace({ optional: true })
+    str: string;
+}
+
 function getValidObjectForBooleanTests(): any {
     return {
         bool: true,
@@ -788,6 +793,20 @@ describe("Direct Parse Functions:", function () {
             Assert.equal(typeMap.date, "date");
             Assert.equal(typeMap.number, "number");
             Assert.equal(typeMap.bool, "boolean");
+        });
+    });
+
+    describe("Treat empty string as undefined for optionality checks:", function () {
+        it("should apply optionality setting correctly", function () {
+            let obj = new ForOptionalStringTest();
+            obj.str = "";
+            Assert.throws(() => {
+                TC.parse(ForOptionalStringTest, obj);
+            }, /must match match the pattern: 'Not whitespace'/i);
+
+            TC.setEmptyStringIsUndefinedForOptionalCheck(true);
+
+            TC.parse(ForOptionalStringTest, obj);
         });
     });
 

@@ -26,6 +26,7 @@ SOFTWARE.
 import * as Field from "./field";
 import * as Maps from "./maps";
 import * as Patterns from "./patterns";
+export declare function setEmptyStringIsUndefinedForOptionalCheck(val: boolean): void;
 export declare type StringConstraintPattern = Patterns.Pattern | string[];
 export declare type Constraints = StringConstraints | NumberConstraints | ArrayConstraints;
 export declare class ArrayConstraints {

@@ -28,6 +28,12 @@ import * as Field from "./field";
 import * as Maps from "./maps";
 import * as Patterns from "./patterns";
 
+let emptyStringIsUndefinedForOptionalCheck = false;
+
+export function setEmptyStringIsUndefinedForOptionalCheck(val: boolean) {
+    emptyStringIsUndefinedForOptionalCheck = val;
+}
+
 export type StringConstraintPattern = Patterns.Pattern | string[];
 export type Constraints = StringConstraints | NumberConstraints | ArrayConstraints;
 
@@ -172,6 +178,11 @@ export function parseValue<T>(options: ParseOptions<T>, value: any): T {
             throw new Error("Value is undefined and not optional.");
         }
         return value;
+    }
+
+    if (emptyStringIsUndefinedForOptionalCheck === true && options.constraints != undefined && options.constraints.optional === true
+        && getTypeString(options.targetType) === "string" && value === "") {
+        return undefined;
     }
 
     if (options.maps != undefined) {
