@@ -100,7 +100,7 @@ function parseValue(options, value) {
         return value;
     }
     if (emptyStringIsUndefinedForOptionalCheck === true && options.constraints != undefined && options.constraints.optional === true
-        && getTypeString(options.targetType) === "string" && value === "") {
+        && typeof (value) === "string" && value === "") {
         return undefined;
     }
     if (options.maps != undefined) {

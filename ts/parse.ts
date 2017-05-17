@@ -181,7 +181,7 @@ export function parseValue<T>(options: ParseOptions<T>, value: any): T {
     }
 
     if (emptyStringIsUndefinedForOptionalCheck === true && options.constraints != undefined && options.constraints.optional === true
-        && getTypeString(options.targetType) === "string" && value === "") {
+        && typeof(value) === "string" && value === "") {
         return undefined;
     }
 
