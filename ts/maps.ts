@@ -46,6 +46,13 @@ export class PredefinedMaps {
         }
     };
 
+    static numberToDate: Map = {
+        type: Number,
+        map: (v: Number) => {
+            return new Date(v);
+        }
+    };
+
     static stringToCustomDate(format: string, nonStrict?: boolean): Map {
         return {
             type: String,

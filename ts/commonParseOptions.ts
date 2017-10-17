@@ -92,7 +92,8 @@ export function date(constraints?: Parse.StringConstraints) {
         targetType: Date,
         constraints: constraints,
         maps: [
-            Maps.PredefinedMaps.stringToDate
+            Maps.PredefinedMaps.stringToDate,
+            Maps.PredefinedMaps.numberToDate
         ]
     };
 }
