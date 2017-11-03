@@ -46,26 +46,20 @@ class PredefinedMaps {
         };
     }
 }
-PredefinedMaps.stringToDate = {
-    type: String,
+PredefinedMaps.anyToDate = {
+    type: "*",
     map: (v) => {
         let asNumber = Number(v);
         if (isNaN(asNumber)) {
             let m = Moment(v, Moment.ISO_8601);
             if (!m.isValid()) {
-                throw new Error("Failed to map string to date, invalid string.");
+                throw new Error(`Failed to map string to date, invalid ISO_8601 date string: '${v}'.`);
             }
             return m.toDate();
         }
         else {
             return new Date(asNumber);
         }
-    }
-};
-PredefinedMaps.numberToDate = {
-    type: Number,
-    map: (v) => {
-        return new Date(v);
     }
 };
 PredefinedMaps.anyToString = {

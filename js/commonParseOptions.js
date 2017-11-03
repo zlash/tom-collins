@@ -88,8 +88,7 @@ function date(constraints) {
         targetType: Date,
         constraints: constraints,
         maps: [
-            Maps.PredefinedMaps.stringToDate,
-            Maps.PredefinedMaps.numberToDate
+            Maps.PredefinedMaps.anyToDate
         ]
     };
 }

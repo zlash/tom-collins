@@ -35,26 +35,19 @@ export class Map {
  * Predefined maps.
  */
 export class PredefinedMaps {
-    static stringToDate: Map = {
-        type: String,
-        map: (v: string) => {
+    static anyToDate: Map = {
+        type: "*",
+        map: (v: any) => {
             let asNumber = Number(v);
             if (isNaN(asNumber)) {
                 let m = Moment(v, Moment.ISO_8601);
                 if (!m.isValid()) {
-                    throw new Error("Failed to map string to date, invalid string.");
+                    throw new Error(`Failed to map string to date, invalid ISO_8601 date string: '${v}'.`);
                 }
                 return m.toDate();
             } else {
                 return new Date(asNumber);
             }
-        }
-    };
-
-    static numberToDate: Map = {
-        type: Number,
-        map: (v: Number) => {
-            return new Date(v);
         }
     };
 

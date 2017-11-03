@@ -6,8 +6,7 @@ export declare class Map {
  * Predefined maps.
  */
 export declare class PredefinedMaps {
-    static stringToDate: Map;
-    static numberToDate: Map;
+    static anyToDate: Map;
     static stringToCustomDate(format: string, nonStrict?: boolean): Map;
     static anyToString: Map;
     static stringToNumber: Map;
