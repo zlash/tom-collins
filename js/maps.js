@@ -1,3 +1,4 @@
+"use strict";
 /*********************************************************************************
 
 MIT License
@@ -23,7 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *********************************************************************************/
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Moment = require("moment");
 class Map {
@@ -49,11 +49,23 @@ class PredefinedMaps {
 PredefinedMaps.stringToDate = {
     type: String,
     map: (v) => {
-        let m = Moment(v, Moment.ISO_8601);
-        if (!m.isValid()) {
-            throw new Error("Failed to map string to date, invalid string.");
+        let asNumber = Number(v);
+        if (isNaN(asNumber)) {
+            let m = Moment(v, Moment.ISO_8601);
+            if (!m.isValid()) {
+                throw new Error("Failed to map string to date, invalid string.");
+            }
+            return m.toDate();
         }
-        return m.toDate();
+        else {
+            return new Date(asNumber);
+        }
+    }
+};
+PredefinedMaps.numberToDate = {
+    type: Number,
+    map: (v) => {
+        return new Date(v);
     }
 };
 PredefinedMaps.anyToString = {

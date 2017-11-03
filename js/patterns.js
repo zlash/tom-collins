@@ -1,3 +1,4 @@
+"use strict";
 /*********************************************************************************
 
 MIT License
@@ -23,7 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *********************************************************************************/
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Pattern {
 }

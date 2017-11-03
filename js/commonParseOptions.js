@@ -1,3 +1,4 @@
+"use strict";
 /*********************************************************************************
 
 MIT License
@@ -23,7 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *********************************************************************************/
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Maps = require("./maps");
 const Patterns = require("./patterns");
@@ -88,7 +88,8 @@ function date(constraints) {
         targetType: Date,
         constraints: constraints,
         maps: [
-            Maps.PredefinedMaps.stringToDate
+            Maps.PredefinedMaps.stringToDate,
+            Maps.PredefinedMaps.numberToDate
         ]
     };
 }

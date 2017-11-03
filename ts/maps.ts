@@ -38,11 +38,16 @@ export class PredefinedMaps {
     static stringToDate: Map = {
         type: String,
         map: (v: string) => {
-            let m = Moment(v, Moment.ISO_8601);
-            if (!m.isValid()) {
-                throw new Error("Failed to map string to date, invalid string.");
+            let asNumber = Number(v);
+            if (isNaN(asNumber)) {
+                let m = Moment(v, Moment.ISO_8601);
+                if (!m.isValid()) {
+                    throw new Error("Failed to map string to date, invalid string.");
+                }
+                return m.toDate();
+            } else {
+                return new Date(asNumber);
             }
-            return m.toDate();
         }
     };
 
