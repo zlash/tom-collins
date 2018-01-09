@@ -114,6 +114,14 @@ function float(constraints) {
     };
 }
 exports.float = float;
+function customSeparatorsFloat(decimalSeparators = ".", thousandSeparators = "", constraints) {
+    return {
+        targetType: Number,
+        constraints: constraints,
+        maps: Maps.PredefinedMaps.stringToNumberWithCustomSeparators(decimalSeparators, thousandSeparators)
+    };
+}
+exports.customSeparatorsFloat = customSeparatorsFloat;
 function positiveFloat(constraints) {
     constraints = constraints || {};
     constraints.minimum = (constraints.minimum && constraints.minimum > 0) ? constraints.minimum : 0;

@@ -29,6 +29,17 @@ const Moment = require("moment");
 class Map {
 }
 exports.Map = Map;
+function parseFloatWithCheck(value) {
+    if (/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
+        return Number(value);
+    }
+    return NaN;
+}
+function escapeForRegex(pattern) {
+    return pattern.replace(/(\[|\]|\.|\{|\}|\?|\+|\*|\^|\$|\\|\|)/g, (match, c) => {
+        return "\\" + c;
+    });
+}
 /**
  * Predefined maps.
  */
@@ -42,6 +53,20 @@ class PredefinedMaps {
                     throw new Error("Failed to map string to date, invalid string.");
                 }
                 return m.toDate();
+            }
+        };
+    }
+    static stringToNumberWithCustomSeparators(decimalSeparator = ".", thousandSeparator = "") {
+        return {
+            type: String,
+            map: (v) => {
+                v = v.replace(new RegExp(escapeForRegex(thousandSeparator), "g"), "");
+                v = v.replace(new RegExp(escapeForRegex(decimalSeparator), "g"), ".");
+                let ret = parseFloatWithCheck(v);
+                if (isNaN(ret)) {
+                    throw new Error("Failed to map string to number.");
+                }
+                return ret;
             }
         };
     }
@@ -71,7 +96,7 @@ PredefinedMaps.anyToString = {
 PredefinedMaps.stringToNumber = {
     type: String,
     map: (v) => {
-        let ret = parseFloat(v);
+        let ret = parseFloatWithCheck(v);
         if (isNaN(ret)) {
             throw new Error("Failed to map string to number.");
         }

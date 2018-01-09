@@ -47,6 +47,7 @@ export declare function parseCustomDate(value: any, format: string, nonStrict?: 
  * Numbers
  **********************************/
 export declare function parseFloat(value: any, constraints?: Parse.NumberConstraints): number;
+export declare function parseCustomSeparatorsFloat(value: any, decimalSeparator?: string, thousandSeparator?: string, constraints?: Parse.NumberConstraints): number;
 export declare function parsePositiveFloat(value: any, constraints?: Parse.NumberConstraints): number;
 export declare function parsePositiveNotZeroFloat(value: any, constraints?: Parse.NumberConstraints): number;
 export declare function parseNegativeFloat(value: any, constraints?: Parse.NumberConstraints): number;

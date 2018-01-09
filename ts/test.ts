@@ -10,6 +10,9 @@ class ForNumericTests {
     @TC.Float({ optional: true })
     optionalFloat: number;
 
+    @TC.CustomSeparatorsFloat(",", ".")
+    customSeparatorsFloat: number;
+
     @TC.PositiveFloat({ maximum: 10 })
     positiveFloatMax10: number;
 
@@ -44,6 +47,7 @@ class ForNumericTests {
 function getValidObjectForNumericTests(): any {
     return {
         optionalFloat: 1.1,
+        customSeparatorsFloat: 3000.5,
         positiveFloatMax10: 1.2,
         negativeFloatMinExclusiveMinus10: -1.3,
         positiveFloatNotZero: 1.4,
@@ -115,7 +119,7 @@ class ForDateTests {
 function getValidObjectForDateTests(): any {
     return {
         date: new Date(),
-        customDate: new Date(),
+        customDate: new Date()
     };
 }
 
@@ -192,6 +196,13 @@ describe("Fields:", function () {
             obj.optionalFloat = "0.5";
             obj = TC.parse(ForNumericTests, obj);
             Assert.equal(obj.optionalFloat, 0.5);
+        });
+
+        it("should parse a float from a string with custom separators", function () {
+            let obj = getValidObjectForNumericTests();
+            obj.customSeparatorsFloat = "3.000,5";
+            obj = TC.parse(ForNumericTests, obj);
+            Assert.equal(obj.customSeparatorsFloat, 3000.5);
         });
 
         it("should fail to parse non floats", function () {
@@ -382,11 +393,13 @@ describe("Fields:", function () {
         it("should handle valid objects correctly", function () {
             let obj = getValidObjectForBooleanTests();
             TC.parse(ForBooleanTests, obj);
+
             Assert.throws(() => {
                 let objB = getValidObjectForStringTests();
                 objB.bool = "banana";
                 TC.parse(ForBooleanTests, objB);
             }, /Invalid string to boolean cast/i);
+            
             Assert.throws(() => {
                 let objB = getValidObjectForStringTests();
                 objB.bool = new Date();
@@ -445,11 +458,6 @@ describe("Fields:", function () {
                 objB.date = "banana";
                 TC.parse(ForDateTests, objB);
             }, /Failed to map string to date/i);
-            Assert.throws(() => {
-                let objB = getValidObjectForStringTests();
-                objB.date = 1;
-                TC.parse(ForDateTests, objB);
-            }, /Invalid type, expected 'Date'/i);
         });
 
         it("should handle ISO-8601 strings correctly", function () {
@@ -717,10 +725,6 @@ describe("Direct Parse Functions:", function () {
             Assert.throws(() => {
                 TC.parseDate("bananana");
             }, /Failed to map string to date/i);
-
-            Assert.throws(() => {
-                TC.parseDate(1);
-            }, /Invalid type/i);
 
             Assert.equal(undefined, TC.parseDate(undefined, { optional: true }));
 

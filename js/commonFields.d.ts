@@ -22,6 +22,7 @@ export declare function CustomDate(format: string, nonStrict?: boolean, constrai
  * Numbers
  **********************************/
 export declare function Float(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
+export declare function CustomSeparatorsFloat(decimalSeparator?: string, thousandSeparator?: string, constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
 export declare function PositiveFloat(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
 export declare function PositiveNotZeroFloat(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;
 export declare function NegativeFloat(constraints?: Parse.NumberConstraints): (target: any, propertyKey: string | symbol) => void;

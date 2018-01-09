@@ -31,6 +31,19 @@ export class Map {
     map: (v: any) => any;
 }
 
+function parseFloatWithCheck(value: string) {
+    if (/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
+        return Number(value);
+    }
+    return NaN;
+}
+
+function escapeForRegex(pattern: string) {
+    return pattern.replace(/(\[|\]|\.|\{|\}|\?|\+|\*|\^|\$|\\|\|)/g, (match, c) => {
+        return "\\" + c;
+    });
+}
+
 /**
  * Predefined maps.
  */
@@ -71,11 +84,25 @@ export class PredefinedMaps {
         }
     };
 
+    static stringToNumberWithCustomSeparators(decimalSeparator = ".", thousandSeparator = ""): Map {
+        return {
+            type: String,
+            map: (v: string) => {
+                v = v.replace(new RegExp(escapeForRegex(thousandSeparator), "g"), "");
+                v = v.replace(new RegExp(escapeForRegex(decimalSeparator), "g"), ".");
+                let ret = parseFloatWithCheck(v);
+                if (isNaN(ret)) {
+                    throw new Error("Failed to map string to number.");
+                }
+                return ret;
+            }
+        };
+    }
 
     static stringToNumber: Map = {
         type: String,
         map: (v: string) => {
-            let ret = parseFloat(v);
+            let ret = parseFloatWithCheck(v);
             if (isNaN(ret)) {
                 throw new Error("Failed to map string to number.");
             }

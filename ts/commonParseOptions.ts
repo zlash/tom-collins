@@ -119,6 +119,15 @@ export function float(constraints?: Parse.NumberConstraints) {
     };
 }
 
+export function customSeparatorsFloat(decimalSeparators = ".", thousandSeparators = "", constraints?: Parse.NumberConstraints) {
+    return {
+        targetType: Number,
+        constraints: constraints,
+        maps: Maps.PredefinedMaps.stringToNumberWithCustomSeparators(decimalSeparators, thousandSeparators)
+    };
+}
+
+
 export function positiveFloat(constraints?: Parse.NumberConstraints) {
     constraints = constraints || {};
     constraints.minimum = (constraints.minimum && constraints.minimum > 0) ? constraints.minimum : 0;

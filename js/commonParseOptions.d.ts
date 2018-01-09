@@ -92,6 +92,11 @@ export declare function float(constraints?: Parse.NumberConstraints): {
     constraints: Parse.NumberConstraints;
     maps: Maps.Map;
 };
+export declare function customSeparatorsFloat(decimalSeparators?: string, thousandSeparators?: string, constraints?: Parse.NumberConstraints): {
+    targetType: NumberConstructor;
+    constraints: Parse.NumberConstraints;
+    maps: Maps.Map;
+};
 export declare function positiveFloat(constraints?: Parse.NumberConstraints): {
     targetType: NumberConstructor;
     constraints: Parse.NumberConstraints;

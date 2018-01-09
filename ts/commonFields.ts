@@ -88,6 +88,10 @@ export function Float(constraints?: Parse.NumberConstraints) {
     return F.Field(CPO.float(constraints));
 }
 
+export function CustomSeparatorsFloat(decimalSeparator = ".", thousandSeparator = "", constraints?: Parse.NumberConstraints) {
+    return F.Field(CPO.customSeparatorsFloat(decimalSeparator, thousandSeparator, constraints));
+}
+
 export function PositiveFloat(constraints?: Parse.NumberConstraints) {
     return F.Field(CPO.positiveFloat(constraints));
 }

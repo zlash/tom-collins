@@ -87,6 +87,10 @@ export function parseFloat(value: any, constraints?: Parse.NumberConstraints): n
     return Parse.parseValue(CPO.float(constraints), value) as number;
 }
 
+export function parseCustomSeparatorsFloat(value: any, decimalSeparator = ".", thousandSeparator = "", constraints?: Parse.NumberConstraints): number {
+    return Parse.parseValue(CPO.customSeparatorsFloat(decimalSeparator, thousandSeparator, constraints), value) as number;
+}
+
 export function parsePositiveFloat(value: any, constraints?: Parse.NumberConstraints): number {
     return Parse.parseValue(CPO.positiveFloat(constraints), value) as number;
 }

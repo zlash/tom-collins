@@ -83,6 +83,10 @@ function Float(constraints) {
     return F.Field(CPO.float(constraints));
 }
 exports.Float = Float;
+function CustomSeparatorsFloat(decimalSeparator = ".", thousandSeparator = "", constraints) {
+    return F.Field(CPO.customSeparatorsFloat(decimalSeparator, thousandSeparator, constraints));
+}
+exports.CustomSeparatorsFloat = CustomSeparatorsFloat;
 function PositiveFloat(constraints) {
     return F.Field(CPO.positiveFloat(constraints));
 }

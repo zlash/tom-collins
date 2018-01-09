@@ -83,6 +83,10 @@ function parseFloat(value, constraints) {
     return Parse.parseValue(CPO.float(constraints), value);
 }
 exports.parseFloat = parseFloat;
+function parseCustomSeparatorsFloat(value, decimalSeparator = ".", thousandSeparator = "", constraints) {
+    return Parse.parseValue(CPO.customSeparatorsFloat(decimalSeparator, thousandSeparator, constraints), value);
+}
+exports.parseCustomSeparatorsFloat = parseCustomSeparatorsFloat;
 function parsePositiveFloat(value, constraints) {
     return Parse.parseValue(CPO.positiveFloat(constraints), value);
 }
